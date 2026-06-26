@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Summer Studio</title>
+<title>The Summer Project</title>
 <!--
   ============================================================
-  THE SUMMER STUDIO — onboarding deck for three boys (15/13/10)
+  THE SUMMER PROJECT — onboarding deck for three boys (15/13/10)
   Structure: tabbed (Start Here / Ammar / Basil / Mohammad / Rewards & Rules / Parents)
   Built-in interactivity: tab switching + clickable step checkboxes + live progress bars (in-memory).
   NEXT-LEVEL interactivity tasks are documented in CLAUDE-CODE-BRIEF.md (handoff file).
@@ -217,7 +217,11 @@
   .print-btn{flex:none;margin-left:14px;font-family:var(--mono);font-size:13px;font-weight:500;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:100px;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s}
   .print-btn:hover{color:var(--text);border-color:var(--line-strong)}
 
+  /* "Skill building:" prefix on the phase cards */
+  .verb .sb{font-weight:700;background:linear-gradient(100deg,var(--ammar),var(--moh) 55%,var(--basil));-webkit-background-clip:text;background-clip:text;color:transparent}
+
   @media print{
+    .verb .sb{-webkit-text-fill-color:#000 !important;color:#000 !important;background:none !important}
     .topbar,.print-btn,.reset-btn,.view-logger,.streak,#confetti{display:none !important}
     .panel{display:none !important}
     .panel.active{display:block !important;animation:none;padding:0}
@@ -239,7 +243,7 @@
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <span class="mark">The <b>Summer Studio</b></span>
+      <span class="mark">The <b>Summer Project</b></span>
       <span class="when">Jul–Aug 2026</span>
       <button class="print-btn" type="button" onclick="window.print()" title="Print this tab / save it as a PDF">⎙ Print tab</button>
     </div>
@@ -270,10 +274,10 @@
 
   <div class="sub-head"><span class="eyebrow">How it works</span><h2>Every channel makes four moves.</h2></div>
   <div class="phases">
-    <div class="phase"><span class="num">01</span><h3>Learn</h3><p>Study the genre. What makes a good version of the thing you want to make?</p><span class="verb">Skill building: Knowledge</span></div>
-    <div class="phase"><span class="num">02</span><h3>Build</h3><p>Make it. Ship the first pieces. Tools show up only when you actually need them.</p><span class="verb">Skill building: Ownership</span></div>
-    <div class="phase"><span class="num">03</span><h3>Tell</h3><p>Name it, brand it, write the captions. Make people understand it.</p><span class="verb">Skill building: Communication</span></div>
-    <div class="phase"><span class="num">04</span><h3>Show</h3><p>Premiere Night. Present your channel and what you learned.</p><span class="verb">Skill building: Presentation</span></div>
+    <div class="phase"><span class="num">01</span><h3>Learn</h3><p>Watch lots of videos like the ones you want to make. Seeing great examples shows you what makes them good — and gives you your own ideas.</p><span class="verb"><span class="sb">Skill building:</span> Knowledge</span></div>
+    <div class="phase"><span class="num">02</span><h3>Build</h3><p>Start making your thing. Save your favourite looks in a mood board or your sheet, then create your first pieces. You learn each tool right when you need it.</p><span class="verb"><span class="sb">Skill building:</span> Ownership</span></div>
+    <div class="phase"><span class="num">03</span><h3>Tell</h3><p>Give it a name, a logo, and a caption. This is how people know what your thing is — and why it's worth watching.</p><span class="verb"><span class="sb">Skill building:</span> Communication</span></div>
+    <div class="phase"><span class="num">04</span><h3>Show</h3><p>On Premiere Night you show the family your channel and explain what you made and learned. Sharing your work out loud is a real skill too.</p><span class="verb"><span class="sb">Skill building:</span> Presentation</span></div>
   </div>
 
   <div class="sub-head"><span class="eyebrow">The system</span><h2>Two things make it real.</h2></div>
@@ -574,7 +578,7 @@
     </div>
   </div>
 
-  <div class="sub-head" style="margin-top:0"><span class="eyebrow">House rules</span><h2>Four rules for the studio.</h2></div>
+  <div class="sub-head" style="margin-top:0"><span class="eyebrow">House rules</span><h2>Four rules for the project.</h2></div>
   <div class="rules">
     <div class="rule big-rule"><span class="n">Rule 01 — the big one</span><h3>Your only competition is last-week you.</h3><p>Three different channels, three different lanes. We will <strong>never</strong> compare your numbers to your brothers'. Each of you is measured against your own first week and your own craft.</p></div>
     <div class="rule"><span class="n">Rule 02</span><h3>Ship beats perfect</h3><p>A posted video beats a perfect idea stuck in your head.</p></div>
