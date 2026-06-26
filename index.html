@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Summer Studio</title>
+<!--
+  ============================================================
+  THE SUMMER STUDIO — onboarding deck for three boys (15/13/10)
+  Structure: tabbed (Start Here / Ammar / Basil / Mohammad / Rewards & Rules / Parents)
+  Built-in interactivity: tab switching + clickable step checkboxes + live progress bars (in-memory).
+  NEXT-LEVEL interactivity tasks are documented in CLAUDE-CODE-BRIEF.md (handoff file).
+  Design tokens are in :root. Each boy has an accent: Ammar=cyan, Basil=coral, Mohammad=violet.
+  ============================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#141110;--surface:#1E1A18;--surface-2:#262120;
+    --line:rgba(255,255,255,.09);--line-strong:rgba(255,255,255,.16);
+    --text:#F4EFE9;--muted:#A89F97;--muted-2:#756D66;
+    --ammar:#34C4D6;--basil:#FF6A3D;--moh:#9B6BFF;
+    --display:'Bricolage Grotesque',sans-serif;--body:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 28px}
+  h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.05;letter-spacing:-.02em}
+  p{color:var(--muted)}
+  strong{color:var(--text);font-weight:600}
+  em{font-style:normal;color:var(--text)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:500}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(20,17,16,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .topbar-inner{max-width:1000px;margin:0 auto;padding:0 28px}
+  .brand{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+  .brand .mark{font-family:var(--display);font-weight:800;font-size:18px}
+  .brand .mark b{background:linear-gradient(100deg,var(--ammar),var(--moh) 55%,var(--basil));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand .when{font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.12em;text-transform:uppercase;margin-left:auto}
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:14px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;font-family:var(--mono);font-size:13px;font-weight:500;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:100px;padding:9px 16px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px;transition:border-color .2s,color .2s,background .2s}
+  .tab:hover{color:var(--text);border-color:var(--line-strong)}
+  .tab .dot{width:8px;height:8px;border-radius:50%}
+  .tab[aria-selected="true"]{color:#141110;font-weight:700}
+  .tab[data-accent="ammar"][aria-selected="true"]{background:var(--ammar);border-color:var(--ammar)}
+  .tab[data-accent="basil"][aria-selected="true"]{background:var(--basil);border-color:var(--basil)}
+  .tab[data-accent="moh"][aria-selected="true"]{background:var(--moh);border-color:var(--moh)}
+  .tab[data-accent="neutral"][aria-selected="true"]{background:var(--text);border-color:var(--text)}
+
+  .panel{display:none;padding:54px 0 80px}
+  .panel.active{display:block;animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .hero h1{font-size:clamp(38px,7vw,68px);margin-bottom:22px}
+  .hero h1 em{background:linear-gradient(100deg,var(--ammar),var(--moh) 55%,var(--basil));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(18px,2.3vw,21px);color:var(--muted);max-width:54ch;line-height:1.5}
+  .lede strong{color:var(--text)}
+  .mini-channels{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+  .mc{display:flex;align-items:center;gap:9px;border:1px solid var(--line-strong);border-radius:100px;padding:9px 16px 9px 13px;font-family:var(--mono);font-size:13px;background:rgba(255,255,255,.02)}
+  .mc .dot{width:9px;height:9px;border-radius:50%}
+  .sub-head{margin:64px 0 26px}
+  .sub-head .eyebrow{display:block;margin-bottom:12px}
+  .sub-head h2{font-size:clamp(26px,4vw,38px)}
+  .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .phase{border:1px solid var(--line);border-radius:14px;padding:22px 20px;background:var(--surface)}
+  .phase .num{font-family:var(--mono);font-size:12px;color:var(--muted-2)}
+  .phase h3{font-size:20px;margin:12px 0 8px}
+  .phase p{font-size:14px;line-height:1.5}
+  .phase .verb{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:12px;display:block}
+  .sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .sys{border:1px solid var(--line);border-radius:14px;padding:26px;background:var(--surface)}
+  .sys .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);display:block;margin-bottom:14px}
+  .sys h3{font-size:19px;margin-bottom:10px}
+  .sys p{font-size:14.5px}
+  .timeline{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+  .stop{padding:26px 22px;border-right:1px solid var(--line)}
+  .stop:last-child{border-right:0}
+  .stop .when{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .stop h3{font-size:20px;margin:10px 0 8px}
+  .stop p{font-size:14px;line-height:1.5}
+  .stop.finale{background:color-mix(in srgb,var(--moh) 10%,var(--surface))}
+  .stop.finale .when{color:var(--moh)}
+
+  .son-head{--c:var(--text);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:14px;background:var(--surface);padding:28px 30px;margin-bottom:26px}
+  .son-id{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);font-weight:700}
+  .son-head h1{font-size:clamp(32px,5vw,48px);margin:10px 0}
+  .son-head h1 .age{font-family:var(--mono);font-size:15px;color:var(--muted);font-weight:400;letter-spacing:0}
+  .son-niche{font-size:16.5px;color:var(--text);max-width:56ch;line-height:1.45}
+  .platforms{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+  .plat{font-family:var(--mono);font-size:11px;border:1px solid var(--line-strong);border-radius:7px;padding:6px 10px;color:var(--muted)}
+
+  .prog-wrap{--c:var(--text);margin-bottom:30px}
+  .prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .prog-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .prog-count{font-family:var(--mono);font-size:13px;color:var(--c);font-weight:700}
+  .prog-track{height:10px;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid var(--line);overflow:hidden}
+  .prog-bar{height:100%;width:0;border-radius:100px;background:var(--c);transition:width .5s cubic-bezier(.2,.7,.2,1)}
+
+  .stage{--c:var(--text);border:1px solid var(--line);border-radius:16px;background:var(--surface);margin-bottom:16px;overflow:hidden}
+  .stage-head{display:flex;align-items:center;gap:14px;padding:22px 26px 16px}
+  .stage-num{font-family:var(--mono);font-size:13px;font-weight:700;color:#141110;background:var(--c);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+  .stage-head h3{font-size:20px}
+  .stage-time{font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.08em;margin-left:auto;white-space:nowrap}
+  .steps{list-style:none;padding:4px 26px 22px}
+  .step{display:flex;align-items:flex-start;gap:13px;padding:11px 0;border-top:1px solid var(--line);cursor:pointer}
+  .step:first-child{border-top:0}
+  .step label{display:flex;align-items:flex-start;gap:13px;cursor:pointer;width:100%}
+  .step input{position:absolute;opacity:0;width:0;height:0}
+  .step .box{flex:none;width:21px;height:21px;border-radius:6px;border:1.5px solid var(--line-strong);margin-top:2px;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s}
+  .step .box svg{width:12px;height:12px;opacity:0;transform:scale(.6);transition:opacity .15s,transform .15s}
+  .step input:checked + .box{background:var(--c);border-color:var(--c)}
+  .step input:checked + .box svg{opacity:1;transform:scale(1)}
+  .step input:focus-visible + .box{outline:2px solid var(--c);outline-offset:2px}
+  .step .txt{font-size:15px;color:var(--text);line-height:1.5}
+  .step input:checked ~ .txt{color:var(--muted-2);text-decoration:line-through;text-decoration-color:var(--muted-2)}
+  .step .txt small{display:block;color:var(--muted);font-size:13px;text-decoration:none;margin-top:2px}
+  .step .txt code{font-family:var(--mono);font-size:12.5px;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;color:var(--text)}
+
+  .lever{--c:var(--text);margin-top:8px;border-radius:14px;padding:22px 24px;background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 35%,transparent)}
+  .lever .label{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--c);font-weight:700;display:block;margin-bottom:8px}
+  .lever p{color:var(--text);font-size:15.5px;line-height:1.5}
+  .toolkit{margin:24px 0 8px}
+  .toolkit .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:12px}
+  .toolchips{display:flex;gap:7px;flex-wrap:wrap}
+  .toolchip{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-radius:6px;padding:6px 10px;color:var(--muted);background:rgba(255,255,255,.015)}
+
+  .reward{border:1px solid var(--line-strong);border-radius:22px;background:linear-gradient(160deg,var(--surface-2),var(--surface));padding:44px 40px;position:relative;overflow:hidden;margin-bottom:40px}
+  .reward::after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:var(--basil);filter:blur(120px);opacity:.16;top:-100px;right:-60px}
+  .reward .inner{position:relative;z-index:2}
+  .reward .eyebrow{color:var(--basil);display:block;margin-bottom:16px}
+  .reward h2{font-size:clamp(26px,4.2vw,40px);max-width:18ch;margin-bottom:12px}
+  .reward .big{font-family:var(--display);font-weight:800;font-size:clamp(60px,12vw,118px);line-height:.9;letter-spacing:-.04em;background:linear-gradient(100deg,var(--basil),var(--moh));-webkit-background-clip:text;background-clip:text;color:transparent;margin:22px 0 6px}
+  .reward .big-sub{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .meter{height:13px;border-radius:100px;background:rgba(255,255,255,.07);margin:28px 0 12px;overflow:hidden;border:1px solid var(--line)}
+  .meter .fill{height:100%;width:0;border-radius:100px;background:linear-gradient(90deg,var(--basil),var(--moh));transition:width 1.3s cubic-bezier(.2,.7,.2,1)}
+  .meter-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
+  .reward-note{margin-top:26px;display:flex;gap:14px;align-items:flex-start;border-top:1px solid var(--line);padding-top:22px}
+  .reward-note .pin{font-family:var(--mono);font-size:11px;color:var(--basil);border:1px solid color-mix(in srgb,var(--basil) 40%,transparent);border-radius:6px;padding:4px 8px;flex:none;margin-top:2px}
+  .reward-note p{font-size:15px;color:var(--text)}
+  .rules{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .rule{border:1px solid var(--line);border-radius:14px;padding:24px;background:var(--surface)}
+  .rule .n{font-family:var(--mono);font-size:12px;color:var(--muted-2)}
+  .rule h3{font-size:18px;margin:12px 0 8px}
+  .rule p{font-size:14.5px;line-height:1.5}
+  .rule.big-rule{grid-column:1/-1;border-color:color-mix(in srgb,var(--moh) 40%,transparent);background:color-mix(in srgb,var(--moh) 8%,var(--surface))}
+  .rule.big-rule .n{color:var(--moh)}
+
+  .pnote{display:flex;gap:18px;padding:22px 0;border-bottom:1px solid var(--line)}
+  .pnote:last-of-type{border-bottom:0}
+  .pnote .k{font-family:var(--mono);font-size:12px;color:var(--muted);flex:none;width:150px;padding-top:3px}
+  .pnote .v{font-size:15.5px;color:var(--text);line-height:1.5}
+  .pnote .v span{color:var(--muted)}
+  .ayah-box{text-align:center;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:40px 32px;margin-top:34px}
+  .ayah-box .arabic{font-size:22px;color:var(--muted);margin-bottom:18px}
+  .ayah-box .ayah{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,28px);line-height:1.3;max-width:26ch;margin:0 auto 16px}
+  .ayah-box p{font-size:15px;max-width:52ch;margin:0 auto}
+
+  @media(max-width:820px){
+    .phases{grid-template-columns:1fr 1fr}
+    .sys-grid,.rules{grid-template-columns:1fr}
+    .timeline{grid-template-columns:1fr}
+    .stop{border-right:0;border-bottom:1px solid var(--line)}
+    .stop:last-child{border-bottom:0}
+    .rule.big-rule{grid-column:auto}
+  }
+  @media(max-width:540px){
+    body{font-size:16px}
+    .wrap,.topbar-inner{padding:0 18px}
+    .phases{grid-template-columns:1fr}
+    .son-head,.stage-head,.steps{padding-left:20px;padding-right:20px}
+    .reward{padding:30px 22px}
+    .pnote{flex-direction:column;gap:6px}
+    .pnote .k{width:auto}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .panel.active{animation:none}
+    .prog-bar,.meter .fill{transition:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="mark">The <b>Summer Studio</b></span>
+      <span class="when">Jul–Aug 2026</span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" data-accent="neutral" role="tab" aria-controls="panel-start" id="tab-start" aria-selected="true">Start here</button>
+      <button class="tab" data-accent="ammar" role="tab" aria-controls="panel-ammar" id="tab-ammar" aria-selected="false"><span class="dot" style="background:var(--ammar)"></span>Ammar · 15</button>
+      <button class="tab" data-accent="basil" role="tab" aria-controls="panel-basil" id="tab-basil" aria-selected="false"><span class="dot" style="background:var(--basil)"></span>Basil · 13</button>
+      <button class="tab" data-accent="moh" role="tab" aria-controls="panel-moh" id="tab-moh" aria-selected="false"><span class="dot" style="background:var(--moh)"></span>Mohammad · 10</button>
+      <button class="tab" data-accent="neutral" role="tab" aria-controls="panel-rewards" id="tab-rewards" aria-selected="false">Rewards &amp; rules</button>
+      <button class="tab" data-accent="neutral" role="tab" aria-controls="panel-parents" id="tab-parents" aria-selected="false">For parents</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- START HERE -->
+<section class="panel active" id="panel-start" role="tabpanel" aria-labelledby="tab-start">
+  <div class="hero">
+    <h1>Build something <em>real</em><br>this summer.</h1>
+    <p class="lede">Three brothers. Three channels. <strong>One real thing each</strong> — built, branded, and shown to the family by the end of August. The software is just the toolbox. The thing you make is the point.</p>
+    <div class="mini-channels">
+      <span class="mc"><span class="dot" style="background:var(--ammar)"></span>Ammar · Car films</span>
+      <span class="mc"><span class="dot" style="background:var(--basil)"></span>Basil · Roblox channel</span>
+      <span class="mc"><span class="dot" style="background:var(--moh)"></span>Mohammad · Story shorts</span>
+    </div>
+  </div>
+
+  <div class="sub-head"><span class="eyebrow">How it works</span><h2>Every channel makes four moves.</h2></div>
+  <div class="phases">
+    <div class="phase"><span class="num">01</span><h3>Learn</h3><p>Study the genre. What makes a good version of the thing you want to make?</p><span class="verb">Knowledge</span></div>
+    <div class="phase"><span class="num">02</span><h3>Build</h3><p>Make it. Ship the first pieces. Tools show up only when you actually need them.</p><span class="verb">Ownership</span></div>
+    <div class="phase"><span class="num">03</span><h3>Tell</h3><p>Name it, brand it, write the captions. Make people understand it.</p><span class="verb">Communication</span></div>
+    <div class="phase"><span class="num">04</span><h3>Show</h3><p>Premiere Night. Present your channel and what you learned.</p><span class="verb">Presentation</span></div>
+  </div>
+
+  <div class="sub-head"><span class="eyebrow">The system</span><h2>Two things make it real.</h2></div>
+  <div class="sys-grid">
+    <div class="sys"><span class="tag">Drive folder</span><h3>Your folder, shared with us</h3><p>Each of you owns one folder in Google Drive and shares it with Mum &amp; Baba. That shared folder is proof your work is real. We're your <strong>stakeholders</strong> — you report to us.</p></div>
+    <div class="sys"><span class="tag">Project sheet</span><h3>Your command centre</h3><p>The sheet holds your ideas, your plan, and what you've posted. Writing it down and tracking it <em>is</em> leadership — making the invisible visible.</p></div>
+  </div>
+
+  <div class="sub-head"><span class="eyebrow">The two months</span><h2>July builds it. August ships it.</h2></div>
+  <div class="timeline">
+    <div class="stop"><span class="when">July</span><h3>Learn + Build</h3><p>Study your genre, set up your folder and sheet, ship your first 2–3 pieces.</p></div>
+    <div class="stop"><span class="when">August</span><h3>Ship + Refine</h3><p>Post on a schedule. Polish your brand. Find your rhythm.</p></div>
+    <div class="stop finale"><span class="when">Late August</span><h3>Premiere Night 🎬</h3><p>Each creator presents his channel and what he made.</p></div>
+  </div>
+</section>
+
+<!-- AMMAR -->
+<section class="panel" id="panel-ammar" role="tabpanel" aria-labelledby="tab-ammar" style="--c:var(--ammar)">
+  <div class="son-head" style="--c:var(--ammar)">
+    <span class="son-id">Channel 01 — Faceless car films</span>
+    <h1>Ammar <span class="age">/ 15</span></h1>
+    <p class="son-niche">Cinematic car films — no face, no voice. The whole brand lives in the craft: the shots, the colour grade, the edit. That's your edge.</p>
+    <div class="platforms"><span class="plat">Instagram</span><span class="plat">TikTok</span><span class="plat">Project management in Drive</span></div>
+  </div>
+
+  <div class="prog-wrap" style="--c:var(--ammar)">
+    <div class="prog-top"><span class="prog-label">Your progress</span><span class="prog-count" data-count>0 of 0 done</span></div>
+    <div class="prog-track"><div class="prog-bar"></div></div>
+  </div>
+
+  <div class="stage" style="--c:var(--ammar)">
+    <div class="stage-head"><span class="stage-num">1</span><h3>Set up your studio</h3><span class="stage-time">Week 1 · ~2 days</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>drive.google.com</code> and sign in</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Click <strong>New → Folder</strong>, name it <code>Ammar — Car Studio</code></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Right-click the folder → <strong>Share</strong> → add Mum &amp; Baba → set them to <strong>Editor</strong> → Send</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Inside it, click <strong>New → Google Sheets</strong>, name it <code>Ammar — Project Sheet</code></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make 4 tabs (right-click → Rename): <strong>Ideas Backlog · Production Tracker · Showroom List · Post Calendar</strong></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Production Tracker</strong>, add 4 columns: Idea · Status · Platform · Date<small>Status will be one of: Filming → Editing → Posted</small></span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--ammar)">
+    <div class="stage-head"><span class="stage-num">2</span><h3>Learn the genre</h3><span class="stage-time">Week 1</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Search <em>"car edits"</em> or <em>"cinematic car"</em> on Instagram &amp; TikTok</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Find <strong>3 accounts</strong> you love and follow them</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Ideas Backlog</strong>, note for each: their shots, their colour look, their caption style</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick the <strong>one look</strong> you want to copy first</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--ammar)">
+    <div class="stage-head"><span class="stage-num">3</span><h3>Set up the channel</h3><span class="stage-time">Week 1</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Decide your <strong>handle</strong> — keep it the same on both apps</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Create a <strong>new Instagram</strong> account for the channel (not your personal one)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Create a <strong>TikTok</strong> with the same handle</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Canva</strong>, make a logo + profile picture (search a "car logo" template)</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--ammar)">
+    <div class="stage-head"><span class="stage-num">4</span><h3>Your first real film</h3><span class="stage-time">Week 2</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick a car you can film (family car, a relative's, or a parked one with permission)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Film <strong>3 shots only:</strong> a slow walk-around, a close detail (wheel/badge), and a reveal</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Open <strong>CapCut → New project</strong> and import your clips</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Trim each clip to <strong>2–4 seconds</strong> and add one trending sound</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Apply your <strong>colour grade / filter</strong> — this is your signature, take your time</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Export in <strong>HD</strong></span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--ammar)">
+    <div class="stage-head"><span class="stage-num">5</span><h3>Your first AI film — OpenArt Director</h3><span class="stage-time">Week 2–3</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Watch one tutorial first — search <em>"OpenArt Director tutorial"</em> on YouTube</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>openart.ai</code>, sign in, open the <strong>Director</strong> feature</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write a prompt for a car scene you want, then generate</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick the best result and download it</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--ammar)">
+    <div class="stage-head"><span class="stage-num">6</span><h3>Brand it &amp; post</h3><span class="stage-time">Week 3</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write a caption in your own words — one line + 2–3 hashtags</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Send the clip to the <strong>family chat</strong> first 💪 <small>This is your confidence rung — start here before the world sees it.</small></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post to Instagram + TikTok</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Log it in <strong>Post Calendar</strong> and mark it <strong>Posted</strong> in your Tracker</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--ammar)">
+    <div class="stage-head"><span class="stage-num">7</span><h3>Find your rhythm</h3><span class="stage-time">August</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post <strong>1–2 videos a week</strong></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt"><strong>Visit a real showroom</strong> and politely ask if you can film for a hobby project<small>This is your biggest win of the summer — bigger than any edit. Add showrooms to your Showroom List first.</small></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Keep your Tracker updated every single time</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Before Premiere Night, pick your <strong>3 best videos</strong> to show</span></label></li>
+    </ul>
+  </div>
+
+  <div class="toolkit"><span class="label">Your toolkit</span><div class="toolchips"><span class="toolchip">Google Sheets</span><span class="toolchip">Google Drive</span><span class="toolchip">CapCut</span><span class="toolchip">OpenArt · Director</span><span class="toolchip">Canva</span><span class="toolchip">Instagram</span><span class="toolchip">TikTok</span></div></div>
+
+  <div class="lever" style="--c:var(--ammar)"><span class="label">Your one lever — courage</span><p>Walking into a showroom and asking to film is the real win — bigger than any edit. Your confidence ladder is yours: family chat → faceless post → captions in your voice → (only if you choose) your voice. One rung at a time.</p></div>
+</section>
+
+<!-- BASIL -->
+<section class="panel" id="panel-basil" role="tabpanel" aria-labelledby="tab-basil" style="--c:var(--basil)">
+  <div class="son-head" style="--c:var(--basil)">
+    <span class="son-id">Channel 02 — Roblox strategy</span>
+    <h1>Basil <span class="age">/ 13</span></h1>
+    <p class="son-niche">A Roblox channel you <em>write</em> — strategy breakdowns, how-to-win clips, your own point of view in public. Plus a weekly "Basil Teaches."</p>
+    <div class="platforms"><span class="plat">YouTube / TikTok</span><span class="plat">Roblox</span></div>
+  </div>
+
+  <div class="prog-wrap" style="--c:var(--basil)">
+    <div class="prog-top"><span class="prog-label">Your progress</span><span class="prog-count" data-count>0 of 0 done</span></div>
+    <div class="prog-track"><div class="prog-bar"></div></div>
+  </div>
+
+  <div class="stage" style="--c:var(--basil)">
+    <div class="stage-head"><span class="stage-num">1</span><h3>Set up your studio</h3><span class="stage-time">Week 1</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>drive.google.com</code> → <strong>New → Folder</strong> → name it <code>Basil — Roblox Channel</code></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Right-click → <strong>Share</strong> → add Mum &amp; Baba as <strong>Editor</strong></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Inside it: <strong>New → Google Sheets</strong> → name it <code>Basil — Project Sheet</code></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make 3 tabs: <strong>Content Calendar · Views &amp; Wins · Streak</strong></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Streak</strong>, write each date you post — the goal is an unbroken chain<small>Your streak matters more than your views. Protect it.</small></span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--basil)">
+    <div class="stage-head"><span class="stage-num">2</span><h3>Name &amp; brand your channel</h3><span class="stage-time">Week 1</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Decide what your channel teaches (e.g. <em>"how to win at Bedwars / ASTD"</em>)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick a channel name</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Canva</strong>, make a logo + banner (search "gaming logo")</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Create the channel — pick <strong>one</strong> app to start (YouTube or TikTok)</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--basil)">
+    <div class="stage-head"><span class="stage-num">3</span><h3>Write your first strategy clip</h3><span class="stage-time">Week 1–2</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick <strong>one</strong> thing you're good at (a Bedwars rush, an ASTD setup)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write <strong>3–5 short points</strong>: what to do, in order, to win<small>This is your script. Read it before you record.</small></span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--basil)">
+    <div class="stage-head"><span class="stage-num">4</span><h3>Record &amp; edit</h3><span class="stage-time">Week 2</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Screen-record yourself playing (phone or PC recorder)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Open <strong>CapCut</strong> → import the recording → cut out the boring parts</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Add <strong>text on screen</strong> for each of your tips</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Add your voice or captions explaining the strategy, then export</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--basil)">
+    <div class="stage-head"><span class="stage-num">5</span><h3>Post &amp; track</h3><span class="stage-time">Week 2</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write a title that says what they'll learn (<em>"How to win Bedwars rushes"</em>)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post it</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Log it in <strong>Content Calendar + Views &amp; Wins</strong>, then mark today on your <strong>Streak</strong> ✓</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--basil)">
+    <div class="stage-head"><span class="stage-num">6</span><h3>Basil Teaches — weekly ritual</h3><span class="stage-time">Every week</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick one thing to research (a swimming technique, a game mechanic — anything)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Ask an <strong>AI</strong> to explain it simply and give you the key points</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Turn it into <strong>3 clear points</strong> you can teach</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Teach the family for <strong>3 minutes</strong> — kitchen table is fine<small>Researching then teaching makes you the one who knows. That's your superpower.</small></span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--basil)">
+    <div class="stage-head"><span class="stage-num">7</span><h3>Build the habit</h3><span class="stage-time">August</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post <strong>once a week</strong> — protect your streak above everything</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Each week check <strong>Views &amp; Wins</strong>: which video did best? Make more like it</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Before Premiere Night, pick your <strong>best clip + best "Basil Teaches"</strong></span></label></li>
+    </ul>
+  </div>
+
+  <div class="toolkit"><span class="label">Your toolkit</span><div class="toolchips"><span class="toolchip">Google Sheets</span><span class="toolchip">Google Drive</span><span class="toolchip">CapCut</span><span class="toolchip">Canva</span><span class="toolchip">AI research</span><span class="toolchip">Roblox</span></div></div>
+
+  <div class="lever" style="--c:var(--basil)"><span class="label">Your one lever — consistency</span><p>Your win isn't views — it's <strong>did I ship this week?</strong> Keep your streak alive and protect it. Shipped beats perfect, every single time.</p></div>
+</section>
+
+<!-- MOHAMMAD -->
+<section class="panel" id="panel-moh" role="tabpanel" aria-labelledby="tab-moh" style="--c:var(--moh)">
+  <div class="son-head" style="--c:var(--moh)">
+    <span class="son-id">Channel 03 — Already live</span>
+    <h1>Mohammad <span class="age">/ 10</span></h1>
+    <p class="son-niche">You already run a real channel — 100 subscribers, 56,000 views. This summer we make it <em>intentional</em>: a proper brand, plus an AI Harry Potter story series.</p>
+    <div class="platforms"><span class="plat">YouTube Shorts</span></div>
+  </div>
+
+  <div class="prog-wrap" style="--c:var(--moh)">
+    <div class="prog-top"><span class="prog-label">Your progress</span><span class="prog-count" data-count>0 of 0 done</span></div>
+    <div class="prog-track"><div class="prog-bar"></div></div>
+  </div>
+
+  <div class="stage" style="--c:var(--moh)">
+    <div class="stage-head"><span class="stage-num">1</span><h3>Set up</h3><span class="stage-time">Week 1</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>drive.google.com</code> → <strong>New → Folder</strong> → name it <code>Mohammad — Channel</code></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Right-click → <strong>Share</strong> → add Mum &amp; Baba</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Inside it: <strong>New → Google Sheets</strong> → name it <code>Video Ideas</code> → list ideas as you get them</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--moh)">
+    <div class="stage-head"><span class="stage-num">2</span><h3>Brand up your channel</h3><span class="stage-time">Week 1</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Open <strong>Canva</strong></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make a <strong>YouTube banner</strong> (search the "YouTube banner" template) with your channel name</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make a <strong>logo / profile picture</strong></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick <strong>one thumbnail style</strong> (same colours + font) you'll use every time</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Upload them to your channel</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--moh)">
+    <div class="stage-head"><span class="stage-num">3</span><h3>Plan your Harry Potter series</h3><span class="stage-time">Week 1–2</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Think of <strong>5 "what if" ideas</strong> (e.g. <em>"what if Harry was in Slytherin?"</em>)</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write them in your <strong>Video Ideas</strong> sheet</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick your favourite to make first</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--moh)">
+    <div class="stage-head"><span class="stage-num">4</span><h3>Make your first AI story</h3><span class="stage-time">Week 2</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Ask an <strong>AI</strong> to help write a short "what if" Harry Potter story</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick the best bits — keep it short</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Build it in <strong>CapCut</strong> as a short — text + images/clips + music</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Use your <strong>same thumbnail style</strong>, then export</span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--moh)">
+    <div class="stage-head"><span class="stage-num">5</span><h3>Post</h3><span class="stage-time">Week 2</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post it to <strong>YouTube Shorts</strong></span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Tell us: <strong>who is this video for?</strong><small>That one question turns "making videos" into "running a channel."</small></span></label></li>
+    </ul>
+  </div>
+
+  <div class="stage" style="--c:var(--moh)">
+    <div class="stage-head"><span class="stage-num">6</span><h3>Keep going</h3><span class="stage-time">July–August</span></div>
+    <ul class="steps">
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make <strong>one video a week</strong> from your ideas list</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make each thumbnail match your style</span></label></li>
+      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Before Premiere Night, pick your <strong>favourite video</strong> + tell us why it's your best</span></label></li>
+    </ul>
+  </div>
+
+  <div class="toolkit"><span class="label">Your toolkit</span><div class="toolchips"><span class="toolchip">Canva</span><span class="toolchip">CapCut</span><span class="toolchip">AI stories</span><span class="toolchip">YouTube</span><span class="toolchip">Google Sheets</span></div></div>
+
+  <div class="lever" style="--c:var(--moh)"><span class="label">Your one lever — intention</span><p>You've published more than anyone here. Before each video, ask two questions: <strong>who is this for, and why this one?</strong> That's the jump from making videos to running a channel — and you can do it while it still feels like a game.</p></div>
+</section>
+
+<!-- REWARDS & RULES -->
+<section class="panel" id="panel-rewards" role="tabpanel" aria-labelledby="tab-rewards">
+  <div class="reward">
+    <div class="inner">
+      <span class="eyebrow">The bounty</span>
+      <h2>Hit the milestone, unlock the reward.</h2>
+      <p>Every video you publish that reaches <strong>3,000 views</strong> earns a reward from Mum &amp; Baba. Any channel. Any video. Real views, real reward.</p>
+      <div class="big">3,000</div>
+      <div class="big-sub">views on a published video = reward unlocked</div>
+      <div class="meter"><div class="fill" data-fill="100"></div></div>
+      <div class="meter-labels"><span>0</span><span>1,500</span><span>3,000 → 🎉</span></div>
+      <div class="reward-note"><span class="pin">Set by Mum &amp; Baba</span><p>The reward itself is yours to set — agree it with the boys up front so the target feels real and worth chasing.</p></div>
+    </div>
+  </div>
+
+  <div class="sub-head" style="margin-top:0"><span class="eyebrow">House rules</span><h2>Four rules for the studio.</h2></div>
+  <div class="rules">
+    <div class="rule big-rule"><span class="n">Rule 01 — the big one</span><h3>Your only competition is last-week you.</h3><p>Three different channels, three different lanes. We will <strong>never</strong> compare your numbers to your brothers'. Each of you is measured against your own first week and your own craft.</p></div>
+    <div class="rule"><span class="n">Rule 02</span><h3>Ship beats perfect</h3><p>A posted video beats a perfect idea stuck in your head.</p></div>
+    <div class="rule"><span class="n">Rule 03</span><h3>Your channel, your call</h3><p>You own it. We're stakeholders, not editors. We ask; you make.</p></div>
+    <div class="rule"><span class="n">Rule 04</span><h3>Stuck is the job</h3><p>Getting stuck isn't failing — it's the work. Ask, don't quit.</p></div>
+  </div>
+</section>
+
+<!-- FOR PARENTS -->
+<section class="panel" id="panel-parents" role="tabpanel" aria-labelledby="tab-parents">
+  <div class="sub-head" style="margin-top:0"><span class="eyebrow">For Mum &amp; Baba — keep this tab for yourselves</span><h2>How to run it without running it.</h2></div>
+  <p style="margin-bottom:8px">A few quiet reminders so the project does its developmental work — not just its surface work.</p>
+  <div class="pnote"><span class="k">Stay stakeholders</span><span class="v">Ask questions, don't take over. <span>The instant you reorganise a boy's sheet or edit his video for him, it stops being his — and the ownership is the whole point. Messy-but-his wins.</span></span></div>
+  <div class="pnote"><span class="k">Guard Rule 01</span><span class="v">Protect the no-comparison rule hardest of all. <span>Mohammad's numbers will dwarf his brothers' early. Never praise one boy by contrast to another — measure each only against his own week one.</span></span></div>
+  <div class="pnote"><span class="k">Set the date</span><span class="v">Lock Premiere Night out loud, early. <span>It's the deadline the whole thing hangs on. A real date turns this from an idea into a project.</span></span></div>
+  <div class="pnote"><span class="k">Let them get stuck</span><span class="v">Friction is the curriculum. <span>When a boy is blocked, ask "what's the blocker?" — don't solve it for him. The struggle is where the growth lives.</span></span></div>
+  <div class="pnote"><span class="k">The reward</span><span class="v">Choose something that points back at the craft. <span>A tool upgrade, an outing, or kit beats cash — cash quietly turns this into a numbers race, which fights Rule 01.</span></span></div>
+
+  <div class="ayah-box">
+    <p class="arabic">إِنَّ اللَّهَ يُحِبُّ إِذَا عَمِلَ أَحَدُكُمْ عَمَلًا أَنْ يُتْقِنَهُ</p>
+    <p class="ayah">"Allah loves that when one of you does a work, he does it with excellence."</p>
+    <p>Real work, done well, is <em>itqan</em> — not separate from deen. Each boy's channel is an <em>amanah</em> he chose to carry this summer.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+  /* tab switching */
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const panels = Array.from(document.querySelectorAll('.panel'));
+  function selectTab(tab){
+    tabs.forEach(t=>t.setAttribute('aria-selected', String(t===tab)));
+    panels.forEach(p=>p.classList.toggle('active', p.id === tab.getAttribute('aria-controls')));
+    window.scrollTo({top:0});
+  }
+  tabs.forEach((tab,i)=>{
+    tab.addEventListener('click', ()=>selectTab(tab));
+    tab.addEventListener('keydown', e=>{
+      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+        e.preventDefault();
+        const dir = e.key==='ArrowRight'?1:-1;
+        const next = tabs[(i+dir+tabs.length)%tabs.length];
+        next.focus(); selectTab(next);
+      }
+    });
+  });
+
+  /* live progress per son panel (in-memory only — see CLAUDE-CODE-BRIEF.md to add persistence) */
+  function wireProgress(panel){
+    const boxes = Array.from(panel.querySelectorAll('.step input[type=checkbox]'));
+    const bar = panel.querySelector('.prog-bar');
+    const count = panel.querySelector('[data-count]');
+    if(!boxes.length || !bar) return;
+    function update(){
+      const done = boxes.filter(b=>b.checked).length;
+      bar.style.width = (done/boxes.length*100) + '%';
+      if(count) count.textContent = done + ' of ' + boxes.length + ' done';
+    }
+    boxes.forEach(b=>b.addEventListener('change', update));
+    update();
+  }
+  ['panel-ammar','panel-basil','panel-moh'].forEach(id=>{
+    const p = document.getElementById(id); if(p) wireProgress(p);
+  });
+
+  /* reward meter fill on view */
+  const fill = document.querySelector('.meter .fill');
+  if(fill){
+    const mo = new IntersectionObserver(es=>es.forEach(e=>{
+      if(e.isIntersecting){ fill.style.width = fill.dataset.fill + '%'; mo.unobserve(e.target); }
+    }),{threshold:.4});
+    mo.observe(fill);
+  }
+</script>
+</body>
+</html>
