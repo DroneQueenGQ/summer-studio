@@ -387,6 +387,34 @@
     .btn:hover, .view-logger button:hover{ transform:translateY(-2px); }
     .view-logger button{ background:var(--grad-warm); color:#fff; box-shadow:0 10px 22px rgba(251,139,30,.30); }
 
+    /* ============================================================
+       PER-PERSON THEMING — each owner's colour fills their own tab
+       ============================================================ */
+    #mp-ammar    { --accent:#0fb6cc; --accent-rgb:15,182,204; --accent-soft:var(--cyan-soft);   --accent-grad:var(--grad-cool); --accent-ink:#06596a; }
+    #mp-basil    { --accent:#fb8b1e; --accent-rgb:251,139,30; --accent-soft:var(--orange-soft); --accent-grad:var(--grad-warm); --accent-ink:#9a5a12; }
+    #mp-mohammad { --accent:#7b59ef; --accent-rgb:123,89,239; --accent-soft:var(--purple-soft); --accent-grad:linear-gradient(120deg,#7b59ef,#b06bff); --accent-ink:#5b3fd0; }
+    #mp-raja     { --accent:#13b16f; --accent-rgb:19,177,111; --accent-soft:var(--green-soft);  --accent-grad:var(--grad-fresh); --accent-ink:#147a4b; }
+
+    .tab-panel{ border-top:4px solid var(--accent); }
+    .tab-panel .profile-head h2{ color:var(--accent-ink); }
+    .tab-panel .badge{ background:linear-gradient(165deg, var(--accent-soft), #fff); border-color:rgba(var(--accent-rgb),.40); }
+    .tab-panel .mission{ border-color:rgba(var(--accent-rgb),.40); border-left:4px solid var(--accent); }
+    .tab-panel .mission h3{ background:var(--accent-soft); color:var(--accent-ink); }
+    .tab-panel .tool-chips span{ border-color:rgba(var(--accent-rgb),.40); color:var(--accent-ink); background:rgba(var(--accent-rgb),.05); }
+    .tab-panel .progress-card{ border-color:rgba(var(--accent-rgb),.35); }
+    .tab-panel .progress-card strong{ color:var(--accent-ink); }
+    .tab-panel .progress-fill{ background:var(--accent-grad); }
+    .tab-panel .step-badge{ background:var(--accent-grad); box-shadow:0 8px 18px rgba(var(--accent-rgb),.32); }
+    .tab-panel .block-head{ background:linear-gradient(180deg, rgba(var(--accent-rgb),.08), #fbfdff); }
+    .tab-panel .tasks input:checked{ background:var(--accent-grad); border-color:transparent; }
+    .tab-panel .why-toggle{ background:linear-gradient(180deg,#fff, rgba(var(--accent-rgb),.05)); }
+    .tab-panel .why-toggle:hover{ border-color:rgba(var(--accent-rgb),.50); }
+    .tab-panel .why-cta{ color:var(--accent-ink); }
+    .tab-panel .why-body p{ border-left-color:var(--accent); background:linear-gradient(135deg, var(--accent-soft), #fff); }
+    .tab-panel .output-table th{ background:var(--accent-soft); color:var(--accent-ink); }
+    .tab-panel .reset-mini:hover{ color:var(--accent); }
+    .tab-panel code{ border-color:rgba(var(--accent-rgb),.30); }
+
     @media (prefers-reduced-motion: reduce) {
       body::before, .hero, .hero::after, .grad, .big-num, .progress-fill::after, .reward-meter .fill::after, .tasks input:checked { animation:none !important; }
       .reward.unlocked { animation:none; }
