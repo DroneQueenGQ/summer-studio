@@ -1,773 +1,1095 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Summer Project</title>
-<!--
-  ============================================================
-  THE SUMMER PROJECT — onboarding deck for three boys (15/13/10)
-  Structure: tabbed (Start Here / Ammar / Basil / Mohammad / Rewards & Rules / Parents)
-  Built-in interactivity: tab switching + clickable step checkboxes + live progress bars (in-memory).
-  NEXT-LEVEL interactivity tasks are documented in CLAUDE-CODE-BRIEF.md (handoff file).
-  Design tokens are in :root. Each boy has an accent: Ammar=cyan, Basil=coral, Mohammad=violet.
-  ============================================================
--->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#141110;--surface:#1E1A18;--surface-2:#262120;
-    --line:rgba(255,255,255,.09);--line-strong:rgba(255,255,255,.16);
-    --text:#F4EFE9;--muted:#A89F97;--muted-2:#756D66;
-    --ammar:#34C4D6;--basil:#FF6A3D;--moh:#9B6BFF;
-    --display:'Bricolage Grotesque',sans-serif;--body:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1000px;margin:0 auto;padding:0 28px}
-  h1,h2,h3{font-family:var(--display);font-weight:800;line-height:1.05;letter-spacing:-.02em}
-  p{color:var(--muted)}
-  strong{color:var(--text);font-weight:600}
-  em{font-style:normal;color:var(--text)}
-  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Summer Independence Project Lab | Ammar, Basil, Mohammad & Raja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f9ff;
+      --bg-2: #fff7ec;
+      --panel: #ffffff;
+      --panel-2: #f8fbff;
+      --text: #102a4c;
+      --muted: #5f6f86;
+      --line: #d7e4f3;
+      --line-strong: #b9d2ee;
+      --cyan: #33c6d8;
+      --cyan-soft: #e8faff;
+      --green: #39b86f;
+      --green-soft: #ecfbf1;
+      --orange: #f39a31;
+      --orange-soft: #fff4e4;
+      --purple: #8d65d8;
+      --purple-soft: #f4efff;
+      --red: #f05c62;
+      --red-soft: #fff0f0;
+      --card: #ffffff;
+      --radius-lg: 28px;
+      --radius-md: 20px;
+      --radius-sm: 12px;
+      --shadow: 0 18px 55px rgba(16, 42, 76, .09);
+      --max: 1220px;
+      --display: 'Bricolage Grotesque', Inter, ui-sans-serif, system-ui, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
 
-  .topbar{position:sticky;top:0;z-index:50;background:rgba(20,17,16,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  .topbar-inner{max-width:1000px;margin:0 auto;padding:0 28px}
-  .brand{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
-  .brand .mark{font-family:var(--display);font-weight:800;font-size:18px}
-  .brand .mark b{background:linear-gradient(100deg,var(--ammar),var(--moh) 55%,var(--basil));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .brand .when{font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.12em;text-transform:uppercase;margin-left:auto}
-  .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:14px;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab{flex:none;font-family:var(--mono);font-size:13px;font-weight:500;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:100px;padding:9px 16px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px;transition:border-color .2s,color .2s,background .2s}
-  .tab:hover{color:var(--text);border-color:var(--line-strong)}
-  .tab .dot{width:8px;height:8px;border-radius:50%}
-  .tab[aria-selected="true"]{color:#141110;font-weight:700}
-  .tab[data-accent="ammar"][aria-selected="true"]{background:var(--ammar);border-color:var(--ammar)}
-  .tab[data-accent="basil"][aria-selected="true"]{background:var(--basil);border-color:var(--basil)}
-  .tab[data-accent="moh"][aria-selected="true"]{background:var(--moh);border-color:var(--moh)}
-  .tab[data-accent="neutral"][aria-selected="true"]{background:var(--text);border-color:var(--text)}
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(51,198,216,.20), transparent 30rem),
+        radial-gradient(circle at 92% 7%, rgba(243,154,49,.18), transparent 30rem),
+        linear-gradient(180deg, #f7fbff 0%, #fffaf2 100%);
+      color: var(--text);
+      line-height: 1.58;
+    }
 
-  .panel{display:none;padding:54px 0 80px}
-  .panel.active{display:block;animation:fade .4s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .page { width: min(var(--max), calc(100% - 34px)); margin: 0 auto; padding: 34px 0 80px; }
 
-  .hero h1{font-size:clamp(38px,7vw,68px);margin-bottom:22px}
-  .hero h1 em{background:linear-gradient(100deg,var(--ammar),var(--moh) 55%,var(--basil));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .lede{font-size:clamp(18px,2.3vw,21px);color:var(--muted);max-width:54ch;line-height:1.5}
-  .lede strong{color:var(--text)}
-  .mini-channels{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
-  .mc{display:flex;align-items:center;gap:9px;border:1px solid var(--line-strong);border-radius:100px;padding:9px 16px 9px 13px;font-family:var(--mono);font-size:13px;background:rgba(255,255,255,.02)}
-  .mc .dot{width:9px;height:9px;border-radius:50%}
-  .sub-head{margin:64px 0 26px}
-  .sub-head .eyebrow{display:block;margin-bottom:12px}
-  .sub-head h2{font-size:clamp(26px,4vw,38px)}
-  .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .phase{border:1px solid var(--line);border-radius:14px;padding:22px 20px;background:var(--surface)}
-  .phase .num{font-family:var(--mono);font-size:12px;color:var(--muted-2)}
-  .phase h3{font-size:20px;margin:12px 0 8px}
-  .phase p{font-size:14px;line-height:1.5}
-  .phase .verb{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:12px;display:block}
-  .sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .sys{border:1px solid var(--line);border-radius:14px;padding:26px;background:var(--surface)}
-  .sys .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);display:block;margin-bottom:14px}
-  .sys h3{font-size:19px;margin-bottom:10px}
-  .sys p{font-size:14.5px}
-  .timeline{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
-  .stop{padding:26px 22px;border-right:1px solid var(--line)}
-  .stop:last-child{border-right:0}
-  .stop .when{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .stop h3{font-size:20px;margin:10px 0 8px}
-  .stop p{font-size:14px;line-height:1.5}
-  .stop.finale{background:color-mix(in srgb,var(--moh) 10%,var(--surface))}
-  .stop.finale .when{color:var(--moh)}
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.98), rgba(246,250,255,.96)),
+        radial-gradient(circle at top right, rgba(51,198,216,.18), transparent 26rem);
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      padding: clamp(28px, 5vw, 58px);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero:before {
+      content:""; position:absolute; inset:-1px; pointer-events:none;
+      background: radial-gradient(circle at top right, rgba(243,154,49,.14), transparent 26rem);
+    }
+    .hero-inner { position:relative; display:grid; grid-template-columns: 1.18fr .82fr; gap: 34px; align-items:center; }
+    .eyebrow { display:inline-flex; gap:8px; align-items:center; color:#072033; background:var(--cyan); border-radius:999px; padding:9px 14px; font-weight:900; letter-spacing:.05em; text-transform:uppercase; font-size:.82rem; }
+    h1,h2,h3,h4 { margin:0; line-height:1.12; font-family:var(--display); font-weight:800; letter-spacing:-.01em; }
+    h1 { margin-top:18px; font-size:clamp(2.5rem, 6vw, 5rem); letter-spacing:-.06em; color:#09264d; }
+    .lead { color:#52657e; font-size:clamp(1.05rem, 2vw, 1.28rem); max-width:850px; margin:22px 0 0; }
+    .hero-meta { display:flex; gap:10px; flex-wrap:wrap; margin-top:26px; }
+    .pill { border:1px solid var(--line); background:#ffffff; border-radius:999px; padding:10px 14px; color:#24415f; font-weight:800; font-size:.9rem; box-shadow:0 8px 22px rgba(16,42,76,.05); }
+    .hero-grid { display:grid; gap:14px; }
+    .mini-profile { border:1px solid var(--line); background:rgba(255,255,255,.88); border-radius:22px; padding:18px; display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:center; box-shadow:0 10px 30px rgba(16,42,76,.05); }
+    .mini-profile .emoji { width:58px; height:58px; display:grid; place-items:center; background:var(--panel-2); border:1px solid var(--line); border-radius:18px; font-size:1.8rem; }
+    .mini-profile strong { display:block; font-size:1.1rem; color:#0f2c52; }
+    .mini-profile span { color:var(--muted); font-size:.92rem; }
 
-  .son-head{--c:var(--text);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:14px;background:var(--surface);padding:28px 30px;margin-bottom:26px}
-  .son-id{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);font-weight:700}
-  .son-head h1{font-size:clamp(32px,5vw,48px);margin:10px 0}
-  .son-head h1 .age{font-family:var(--mono);font-size:15px;color:var(--muted);font-weight:400;letter-spacing:0}
-  .son-niche{font-size:16.5px;color:var(--text);max-width:56ch;line-height:1.45}
-  .platforms{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
-  .plat{font-family:var(--mono);font-size:11px;border:1px solid var(--line-strong);border-radius:7px;padding:6px 10px;color:var(--muted)}
+    section, .tabs-card { margin-top:26px; }
+    .section-card, .tabs-card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: clamp(22px, 3.5vw, 38px);
+    }
+    .section-heading { display:flex; gap:16px; align-items:flex-start; margin-bottom:22px; }
+    .num { flex:0 0 46px; width:46px; height:46px; border-radius:13px; background:var(--cyan); color:#062434; font-weight:950; display:grid; place-items:center; font-size:1.18rem; box-shadow:0 10px 24px rgba(51,198,216,.24); }
+    .section-heading h2 { font-size:clamp(1.55rem, 3vw, 2.35rem); letter-spacing:-.04em; color:#0b2d57; }
+    .section-heading p { margin:8px 0 0; color:var(--muted); max-width:960px; }
 
-  .prog-wrap{--c:var(--text);margin-bottom:30px}
-  .prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-  .prog-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-  .prog-count{font-family:var(--mono);font-size:13px;color:var(--c);font-weight:700}
-  .prog-track{height:10px;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid var(--line);overflow:hidden}
-  .prog-bar{height:100%;width:0;border-radius:100px;background:var(--c);transition:width .5s cubic-bezier(.2,.7,.2,1)}
+    .grid-2 { display:grid; grid-template-columns: repeat(2, 1fr); gap:18px; }
+    .grid-3 { display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; }
+    .grid-4 { display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; }
+    .info-card, .skill-card, .tool-card, .step-card, .task-block, .template-box, .rules-box, .check-card, .week-card, .rhythm-mini-card {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border:1px solid var(--line);
+      border-radius: var(--radius-md);
+    }
+    .info-card, .skill-card, .tool-card, .week-card, .rhythm-mini-card { padding:20px; }
+    .info-card h3, .skill-card h3, .tool-card h3, .week-card h3, .rhythm-mini-card h3 { font-size:1.16rem; margin-bottom:8px; color:#0f2c52; }
+    .info-card p, .skill-card p, .tool-card p, .week-card p, .rhythm-mini-card p { margin:0; color:var(--muted); }
+    .tag { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:6px 10px; font-weight:900; font-size:.78rem; margin-bottom:12px; }
+    .tag.cyan { background:var(--cyan-soft); color:#02758a; }
+    .tag.green { background:var(--green-soft); color:#217b4a; }
+    .tag.orange { background:var(--orange-soft); color:#99611b; }
+    .tag.purple { background:var(--purple-soft); color:#6544a8; }
 
-  .stage{--c:var(--text);border:1px solid var(--line);border-radius:16px;background:var(--surface);margin-bottom:16px;overflow:hidden}
-  .stage-head{display:flex;align-items:center;gap:14px;padding:22px 26px 16px}
-  .stage-num{font-family:var(--mono);font-size:13px;font-weight:700;color:#141110;background:var(--c);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
-  .stage-head h3{font-size:20px}
-  .stage-time{font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.08em;margin-left:auto;white-space:nowrap}
-  .steps{list-style:none;padding:4px 26px 22px}
-  .step{display:flex;align-items:flex-start;gap:13px;padding:11px 0;border-top:1px solid var(--line);cursor:pointer}
-  .step:first-child{border-top:0}
-  .step label{display:flex;align-items:flex-start;gap:13px;cursor:pointer;width:100%}
-  .step input{position:absolute;opacity:0;width:0;height:0}
-  .step .box{flex:none;width:21px;height:21px;border-radius:6px;border:1.5px solid var(--line-strong);margin-top:2px;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s}
-  .step .box svg{width:12px;height:12px;opacity:0;transform:scale(.6);transition:opacity .15s,transform .15s}
-  .step input:checked + .box{background:var(--c);border-color:var(--c)}
-  .step input:checked + .box svg{opacity:1;transform:scale(1)}
-  .step input:focus-visible + .box{outline:2px solid var(--c);outline-offset:2px}
-  .step .txt{font-size:15px;color:var(--text);line-height:1.5}
-  .step input:checked ~ .txt{color:var(--muted-2);text-decoration:line-through;text-decoration-color:var(--muted-2)}
-  .step .txt small{display:block;color:var(--muted);font-size:13px;text-decoration:none;margin-top:2px}
-  .step .txt code{font-family:var(--mono);font-size:12.5px;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;color:var(--text)}
+    .flow { display:grid; grid-template-columns: repeat(6, 1fr); gap:14px; margin-top:20px; }
+    .flow-step { position:relative; padding:18px 14px; background:#ffffff; border:1px solid var(--line); border-radius:18px; min-height:154px; box-shadow:0 8px 22px rgba(16,42,76,.05); }
+    .flow-step:not(:last-child):after { content:"→"; position:absolute; top:50%; right:-14px; transform:translateY(-50%); color:#0b7e91; font-weight:950; z-index:2; }
+    .flow-step b { display:block; color:#0b2d57; margin:8px 0 5px; }
+    .flow-step p { margin:0; color:var(--muted); font-size:.9rem; }
+    .icon-circle { width:44px; height:44px; display:grid; place-items:center; border-radius:14px; background:#f3f8ff; border:1px solid var(--line); font-size:1.35rem; }
 
-  .lever{--c:var(--text);margin-top:8px;border-radius:14px;padding:22px 24px;background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 35%,transparent)}
-  .lever .label{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--c);font-weight:700;display:block;margin-bottom:8px}
-  .lever p{color:var(--text);font-size:15.5px;line-height:1.5}
-  .toolkit{margin:24px 0 8px}
-  .toolkit .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:12px}
-  .toolchips{display:flex;gap:7px;flex-wrap:wrap}
-  .toolchip{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-radius:6px;padding:6px 10px;color:var(--muted);background:rgba(255,255,255,.015)}
+    .timeline { display:grid; grid-template-columns: repeat(6, 1fr); gap:12px; margin-top:12px; }
+    .week-card { position:relative; min-height:150px; }
+    .week-card .week-label { display:inline-flex; padding:6px 10px; border-radius:999px; background:var(--purple-soft); color:#6544a8; font-weight:950; font-size:.82rem; margin-bottom:12px; }
+    .week-card .week-icon { font-size:1.7rem; margin-bottom:8px; }
+    .rhythm-cycle { display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-top:18px; }
 
-  .reward{border:1px solid var(--line-strong);border-radius:22px;background:linear-gradient(160deg,var(--surface-2),var(--surface));padding:44px 40px;position:relative;overflow:hidden;margin-bottom:40px}
-  .reward::after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:var(--basil);filter:blur(120px);opacity:.16;top:-100px;right:-60px}
-  .reward .inner{position:relative;z-index:2}
-  .reward .eyebrow{color:var(--basil);display:block;margin-bottom:16px}
-  .reward h2{font-size:clamp(26px,4.2vw,40px);max-width:18ch;margin-bottom:12px}
-  .reward .big{font-family:var(--display);font-weight:800;font-size:clamp(60px,12vw,118px);line-height:.9;letter-spacing:-.04em;background:linear-gradient(100deg,var(--basil),var(--moh));-webkit-background-clip:text;background-clip:text;color:transparent;margin:22px 0 6px}
-  .reward .big-sub{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-  .meter{height:13px;border-radius:100px;background:rgba(255,255,255,.07);margin:28px 0 12px;overflow:hidden;border:1px solid var(--line)}
-  .meter .fill{height:100%;width:0;border-radius:100px;background:linear-gradient(90deg,var(--basil),var(--moh));transition:width 1.3s cubic-bezier(.2,.7,.2,1)}
-  .meter-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
-  .reward-note{margin-top:26px;display:flex;gap:14px;align-items:flex-start;border-top:1px solid var(--line);padding-top:22px}
-  .reward-note .pin{font-family:var(--mono);font-size:11px;color:var(--basil);border:1px solid color-mix(in srgb,var(--basil) 40%,transparent);border-radius:6px;padding:4px 8px;flex:none;margin-top:2px}
-  .reward-note p{font-size:15px;color:var(--text)}
-  .rules{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .rule{border:1px solid var(--line);border-radius:14px;padding:24px;background:var(--surface)}
-  .rule .n{font-family:var(--mono);font-size:12px;color:var(--muted-2)}
-  .rule h3{font-size:18px;margin:12px 0 8px}
-  .rule p{font-size:14.5px;line-height:1.5}
-  .rule.big-rule{grid-column:1/-1;border-color:color-mix(in srgb,var(--moh) 40%,transparent);background:color-mix(in srgb,var(--moh) 8%,var(--surface))}
-  .rule.big-rule .n{color:var(--moh)}
+    .tools-grid { display:grid; grid-template-columns: repeat(8, 1fr); gap:14px; }
+    .tool-card { min-height:170px; }
+    .tool-card .tool-icon { font-size:1.8rem; width:52px; height:52px; display:grid; place-items:center; border-radius:16px; margin-bottom:12px; background:#f2f8ff; border:1px solid var(--line); }
+    .tool-card ul { margin:12px 0 0; padding-left:18px; color:var(--muted); }
 
-  .pnote{display:flex;gap:18px;padding:22px 0;border-bottom:1px solid var(--line)}
-  .pnote:last-of-type{border-bottom:0}
-  .pnote .k{font-family:var(--mono);font-size:12px;color:var(--muted);flex:none;width:150px;padding-top:3px}
-  .pnote .v{font-size:15.5px;color:var(--text);line-height:1.5}
-  .pnote .v span{color:var(--muted)}
-  .ayah-box{text-align:center;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:40px 32px;margin-top:34px}
-  .ayah-box .arabic{font-size:22px;color:var(--muted);margin-bottom:18px}
-  .ayah-box .ayah{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,28px);line-height:1.3;max-width:26ch;margin:0 auto 16px}
-  .ayah-box p{font-size:15px;max-width:52ch;margin:0 auto}
+    .template-box { padding:22px; margin-top:18px; background:linear-gradient(180deg,#ffffff,#f8fbff); }
+    .template-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-top:14px; }
+    .template-line { background:#ffffff; border:1px dashed var(--line-strong); border-radius:14px; padding:12px 14px; color:#29435f; }
+    .template-line b { color:#0b2d57; }
+    .small-note { color:var(--muted); font-size:.92rem; margin-top:10px; }
 
-  @media(max-width:820px){
-    .phases{grid-template-columns:1fr 1fr}
-    .sys-grid,.rules{grid-template-columns:1fr}
-    .timeline{grid-template-columns:1fr}
-    .stop{border-right:0;border-bottom:1px solid var(--line)}
-    .stop:last-child{border-bottom:0}
-    .rule.big-rule{grid-column:auto}
-  }
-  @media(max-width:540px){
-    body{font-size:16px}
-    .wrap,.topbar-inner{padding:0 18px}
-    .phases{grid-template-columns:1fr}
-    .son-head,.stage-head,.steps{padding-left:20px;padding-right:20px}
-    .reward{padding:30px 22px}
-    .pnote{flex-direction:column;gap:6px}
-    .pnote .k{width:auto}
-  }
-  @media(prefers-reduced-motion:reduce){
-    .panel.active{animation:none}
-    .prog-bar,.meter .fill{transition:none}
-    html{scroll-behavior:auto}
-    .reward.unlocked{animation:none}
-    .confetti-pc{display:none}
-  }
+    .tabs-card { padding:0; overflow:hidden; }
+    .tabs-header { display:grid; grid-template-columns: repeat(4, 1fr); border-bottom:1px solid var(--line); background:#f4f8ff; position:sticky; top:0; z-index:10; }
+    .tab-btn { border:0; border-right:1px solid var(--line); background:transparent; color:#314a67; padding:18px; cursor:pointer; font-size:1rem; font-weight:900; text-align:left; }
+    .tab-btn:last-child { border-right:0; }
+    .tab-btn.active { background:var(--cyan); color:#062434; }
+    .tab-panel { display:none; padding: clamp(22px, 3.5vw, 38px); background:#ffffff; }
+    .tab-panel.active { display:block; }
 
-  /* ===== interactive enhancements ===== */
-  /* reset control sits to the right of the progress count */
-  .prog-top{gap:12px}
-  .prog-top .prog-label{flex:1}
-  .reset-btn{flex:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);background:none;border:0;cursor:pointer;padding:2px 2px;transition:color .15s}
-  .reset-btn:hover{color:var(--text)}
+    .profile-head { display:grid; grid-template-columns: 1fr auto; gap:20px; align-items:start; margin-bottom:22px; }
+    .profile-head h2 { font-size: clamp(1.75rem, 3vw, 2.7rem); letter-spacing:-.045em; color:#082853; }
+    .profile-head p { margin:12px 0 0; color:var(--muted); max-width:860px; }
+    .badge { border:1px solid var(--line-strong); border-radius:20px; padding:16px 18px; min-width:230px; background:linear-gradient(180deg,#eef7ff,#ffffff); text-align:center; }
+    .badge .big { font-size:2rem; display:block; margin-bottom:8px; }
+    .badge strong { display:block; color:#0b2d57; }
+    .badge span { color:#314a67; }
 
-  /* reward view logger + celebration */
-  .view-logger{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:24px;border-top:1px solid var(--line);padding-top:22px}
-  .view-logger label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .view-logger input{font-family:var(--mono);font-size:15px;background:rgba(255,255,255,.05);border:1px solid var(--line-strong);border-radius:8px;color:var(--text);padding:8px 12px;width:130px}
-  .view-logger input:focus{outline:2px solid var(--basil);outline-offset:1px}
-  .view-logger button{font-family:var(--mono);font-size:12px;font-weight:700;background:var(--basil);color:#141110;border:0;border-radius:8px;padding:9px 16px;cursor:pointer}
-  .view-logger .hint{flex-basis:100%;font-family:var(--mono);font-size:11px;color:var(--muted-2);margin-top:-2px}
-  .reward.unlocked{animation:rewardGlow 2.2s ease}
-  @keyframes rewardGlow{0%{box-shadow:0 0 0 0 rgba(255,106,61,0)}30%{box-shadow:0 0 70px 8px rgba(255,106,61,.55)}100%{box-shadow:0 0 0 0 rgba(255,106,61,0)}}
-  #confetti{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
-  .confetti-pc{position:absolute;width:9px;height:14px;border-radius:2px;will-change:transform,opacity}
-  @keyframes confettiFall{to{transform:translateY(108vh) rotate(720deg);opacity:.15}}
+    .project-control { display:grid; grid-template-columns: 1fr 260px; gap:18px; margin-bottom:20px; }
+    .mission { padding:24px; border-radius:22px; background:linear-gradient(135deg, #ffffff, #f4faff); border:1px solid var(--line-strong); box-shadow:0 12px 34px rgba(16,42,76,.06); }
+    .mission h3 { display:inline-block; margin-bottom:10px; padding:2px 6px; background:#dceeff; color:#0b2d57; font-size:1.45rem; letter-spacing:-.03em; }
+    .mission p { margin:0; color:#29435f; font-size:1.02rem; }
+    .tool-chips { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+    .tool-chips span { display:inline-flex; border:1px solid var(--line); background:#ffffff; border-radius:999px; padding:8px 12px; font-weight:850; color:#25405f; font-size:.9rem; }
+    .progress-card { background:#ffffff; border:1px solid var(--line); border-radius:22px; padding:18px; box-shadow:0 10px 26px rgba(16,42,76,.05); }
+    .progress-card strong { display:block; font-size:1.05rem; margin-bottom:10px; color:#0f2c52; }
+    .progress-track { height:12px; border-radius:999px; background:#e7eef8; overflow:hidden; margin:10px 0; }
+    .progress-fill { height:100%; width:0; background:linear-gradient(90deg, var(--cyan), var(--green)); transition:.2s ease; }
+    .progress-card span { color:var(--muted); font-size:.9rem; }
 
-  /* Basil streak counter */
-  .streak{display:flex;align-items:center;gap:16px;margin:8px 0 30px;border:1px solid color-mix(in srgb,var(--basil) 35%,transparent);background:color-mix(in srgb,var(--basil) 10%,transparent);border-radius:14px;padding:18px 22px}
-  .streak .s-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--basil);font-weight:700}
-  .streak .s-label small{display:block;color:var(--muted);font-size:11px;letter-spacing:0;text-transform:none;margin-top:5px;font-weight:400}
-  .streak .s-ctrl{display:flex;align-items:center;gap:14px;margin-left:auto}
-  .streak button{font-family:var(--display);font-weight:800;font-size:20px;width:38px;height:38px;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;transition:border-color .15s,color .15s}
-  .streak button:hover{border-color:var(--basil);color:var(--basil)}
-  .streak .s-val{font-family:var(--display);font-weight:800;font-size:34px;min-width:46px;text-align:center;color:var(--basil)}
+    .task-block { margin-top:18px; padding:0; overflow:hidden; background:#ffffff; }
+    .block-head { display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center; padding:20px 22px; border-bottom:1px solid var(--line); background:#fbfdff; }
+    .step-badge { width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background:#0b2d57; color:#ffffff; font-weight:950; font-size:1.15rem; }
+    .block-head h3 { font-size:1.38rem; letter-spacing:-.025em; color:#0b2d57; }
+    .time { color:#70819a; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:.88rem; letter-spacing:.08em; white-space:nowrap; }
+    .tasks { list-style:none; margin:0; padding:0 22px 20px; }
+    .tasks li { border-bottom:1px solid #edf2f8; padding:16px 0; display:grid; grid-template-columns:34px 1fr; gap:14px; align-items:start; }
+    .tasks li:last-child { border-bottom:0; }
+    .tasks input { width:26px; height:26px; appearance:none; border:2px solid #c7d6e8; border-radius:8px; background:#ffffff; cursor:pointer; position:relative; margin-top:2px; }
+    .tasks input:checked { background:var(--green); border-color:var(--green); }
+    .tasks input:checked:after { content:"✓"; position:absolute; inset:0; display:grid; place-items:center; color:#ffffff; font-weight:950; }
+    .tasks label { cursor:pointer; color:#263e59; }
+    .tasks small { display:block; color:var(--muted); margin-top:5px; }
+    .task-intro { margin:0 22px 12px; color:var(--muted); line-height:1.65; font-size:1.02rem; }
+    code { background:#f2f5fa; border:1px solid #dce6f1; border-radius:8px; padding:2px 7px; color:#2d4058; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:.94em; }
 
-  /* print / save-as-PDF button */
-  .print-btn{flex:none;margin-left:14px;font-family:var(--mono);font-size:13px;font-weight:500;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:100px;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s}
-  .print-btn:hover{color:var(--text);border-color:var(--line-strong)}
+    .output-table { width:100%; border-collapse:collapse; overflow:hidden; border-radius:18px; border:1px solid var(--line); margin-top:20px; background:#ffffff; }
+    .output-table th, .output-table td { padding:14px 15px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .output-table th { background:#f4f8ff; color:#0b2d57; font-size:.82rem; letter-spacing:.05em; text-transform:uppercase; }
+    .output-table tr:last-child td { border-bottom:0; }
+    .output-table td { color:#29435f; }
 
-  /* "Skill building:" prefix on the phase cards */
-  .verb .sb{font-weight:700;background:linear-gradient(100deg,var(--ammar),var(--moh) 55%,var(--basil));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .rules-box { padding:22px; border-color:rgba(240,92,98,.30); background:linear-gradient(135deg, var(--red-soft), #ffffff); }
+    .rules-box h3 { color:#9b2d33; margin-bottom:10px; }
+    .rules-box ul { margin:0; padding-left:20px; color:#29435f; }
 
-  @media print{
-    .verb .sb{-webkit-text-fill-color:#000 !important;color:#000 !important;background:none !important}
-    .topbar,.print-btn,.reset-btn,.view-logger,.streak,#confetti{display:none !important}
-    .panel{display:none !important}
-    .panel.active{display:block !important;animation:none;padding:0}
-    body{background:#fff;color:#000;font-size:11.5pt}
-    .wrap{max-width:none;padding:0}
-    p,.lede,.son-niche,.step .txt,.step .txt small,.prog-label,.prog-count,.stage-time,.eyebrow{color:#222 !important}
-    .stage,.son-head,.phase,.sys,.reward,.rule,.prog-track,.lever,.toolchip,.timeline,.stop{border-color:#bbb !important;background:#fff !important;break-inside:avoid}
-    .stage-num,.prog-bar{background:#444 !important;color:#fff !important}
-    .step .box{border-color:#555 !important}
-    .step input:checked + .box{background:#000 !important;border-color:#000 !important}
-    .reward::after{display:none}
-    .reward .big,.hero h1 em,.son-head h1{-webkit-text-fill-color:#000 !important;color:#000 !important;background:none !important}
-    a{color:#000}
-  }
-</style>
+    .family-check { display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; }
+    .check-card { background:#ffffff; border:1px solid var(--line); border-radius:18px; padding:18px; }
+    .check-card h3 { font-size:1.06rem; margin-bottom:8px; color:#0f2c52; }
+    .check-card p { color:var(--muted); margin:0; }
+
+    .action-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
+    .btn { border:0; border-radius:999px; padding:12px 16px; font-weight:950; cursor:pointer; }
+    .btn.print { background:var(--cyan); color:#062434; }
+    .btn.reset { background:#ffffff; color:#24415f; border:1px solid var(--line); }
+
+    footer { margin-top:26px; text-align:center; color:var(--muted); font-size:.92rem; }
+
+    @media (max-width: 1100px) {
+      .hero-inner, .grid-2, .profile-head, .project-control { grid-template-columns:1fr; }
+      .grid-3, .grid-4, .family-check, .rhythm-cycle { grid-template-columns:repeat(2, 1fr); }
+      .flow { grid-template-columns:repeat(3, 1fr); }
+      .flow-step:after { display:none; }
+      .tools-grid { grid-template-columns: repeat(3, 1fr); }
+      .timeline { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 720px) {
+      .page { width:min(100% - 20px, var(--max)); padding-top:14px; }
+      .hero { border-radius:24px; }
+      .tabs-header, .grid-3, .grid-4, .flow, .tools-grid, .template-grid, .family-check, .timeline, .rhythm-cycle { grid-template-columns:1fr; }
+      .tab-btn { border-right:0; border-bottom:1px solid var(--line); }
+      .block-head { grid-template-columns:auto 1fr; }
+      .time { grid-column:2; }
+      .output-table { font-size:.9rem; }
+    }
+    /* ===== rewards & celebration ===== */
+    .reward-hero { display:grid; grid-template-columns:1.1fr .9fr; gap:24px; align-items:center; }
+    .big-num { font-family:var(--display); font-weight:800; font-size:clamp(3.4rem,9vw,6rem); line-height:.9; letter-spacing:-.04em; background:linear-gradient(100deg,var(--orange),var(--red)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .big-sub { color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:.82rem; }
+    .reward-meter { height:14px; border-radius:999px; background:#eef2f8; border:1px solid var(--line); overflow:hidden; margin:18px 0 10px; }
+    .reward-meter .fill { height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,var(--orange),var(--red)); transition:width 1s cubic-bezier(.2,.7,.2,1); }
+    .reward-meter-labels { display:flex; justify-content:space-between; color:var(--muted); font-size:.8rem; font-weight:700; }
+    .view-logger { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:18px; }
+    .view-logger label { font-weight:800; color:#24415f; font-size:.9rem; }
+    .view-logger input { font-family:var(--mono); font-size:1rem; border:1px solid var(--line-strong); border-radius:12px; padding:10px 14px; width:150px; color:var(--text); background:#fff; }
+    .view-logger input:focus { outline:2px solid var(--orange); outline-offset:1px; }
+    .view-logger button { background:var(--orange); color:#3a2208; border:0; border-radius:999px; padding:11px 18px; font-weight:900; cursor:pointer; }
+    .reward-note { margin-top:18px; display:flex; gap:12px; align-items:flex-start; border-top:1px solid var(--line); padding-top:16px; color:#29435f; }
+    .reward-note .pin { flex:none; background:var(--orange-soft); color:#99611b; border-radius:999px; padding:6px 10px; font-weight:900; font-size:.75rem; }
+    .reward.unlocked { animation:rewardGlow 2.2s ease; }
+    @keyframes rewardGlow { 0%{box-shadow:var(--shadow)} 30%{box-shadow:0 0 70px 8px rgba(243,154,49,.5)} 100%{box-shadow:var(--shadow)} }
+    #confetti { position:fixed; inset:0; pointer-events:none; z-index:999; overflow:hidden; }
+    .confetti-pc { position:absolute; width:9px; height:14px; border-radius:2px; will-change:transform,opacity; }
+    @keyframes confettiFall { to { transform:translateY(108vh) rotate(720deg); opacity:.15; } }
+
+    /* ===== house rules ===== */
+    .house-rules { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    .house-rule { background:linear-gradient(180deg,#fff,#f8fbff); border:1px solid var(--line); border-radius:var(--radius-md); padding:22px; }
+    .house-rule.flag { grid-column:1/-1; border-color:var(--line-strong); background:linear-gradient(135deg,var(--cyan-soft),#fff); }
+    .house-rule .rn { font-family:var(--mono); font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+    .house-rule h3 { margin:10px 0 6px; color:#0b2d57; }
+    .house-rule p { margin:0; color:var(--muted); }
+
+    /* ===== parent review check-lists + core principle ===== */
+    .check-list { list-style:none; margin:8px 0 0; padding:0; }
+    .check-list li { position:relative; padding:9px 0 9px 30px; color:#29435f; border-top:1px solid #edf2f8; }
+    .check-list li:first-child { border-top:0; }
+    .check-list li:before { content:"✓"; position:absolute; left:0; top:8px; width:20px; height:20px; display:grid; place-items:center; border-radius:6px; background:var(--green-soft); color:#217b4a; font-weight:900; font-size:.78rem; }
+    .core-principle { margin-top:18px; border:1px solid var(--orange-soft); background:linear-gradient(135deg,var(--orange-soft),#fff); border-radius:var(--radius-md); padding:22px 24px; }
+    .core-principle h3 { color:#99611b; margin-bottom:8px; }
+    .core-principle p { margin:0; color:#29435f; }
+
+    /* ===== per-project reset ===== */
+    .reset-mini { margin-top:12px; background:transparent; border:0; color:var(--muted); font-weight:800; font-size:.8rem; cursor:pointer; text-decoration:underline; padding:0; }
+    .reset-mini:hover { color:var(--red); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reward.unlocked { animation:none; }
+      .confetti-pc { display:none; }
+      .reward-meter .fill, .progress-fill { transition:none; }
+      html { scroll-behavior:auto; }
+    }
+
+    @media (max-width: 1100px) {
+      .reward-hero, .house-rules { grid-template-columns:1fr; }
+    }
+
+    @media print {
+      .view-logger, #confetti, .reset-mini { display:none !important; }
+      .big-num { -webkit-text-fill-color:#111 !important; color:#111 !important; background:none !important; }
+    }
+
+    @media print {
+      body { background:white; color:#111; }
+      .page { width:100%; padding:0; }
+      .hero,.section-card,.tabs-card,.info-card,.skill-card,.tool-card,.task-block,.template-box,.rules-box,.check-card,.week-card,.rhythm-mini-card { background:white !important; color:#111; box-shadow:none; border-color:#ddd; }
+      h1,h2,h3,h4,.tasks label,.output-table th,.output-table td,.mission p { color:#111 !important; }
+      .lead,.section-heading p,.info-card p,.skill-card p,.tool-card p,.tasks small,.small-note,.profile-head p,.output-table td,.check-card p,.week-card p,.rhythm-mini-card p { color:#444 !important; }
+      .tab-panel { display:block !important; page-break-inside:avoid; }
+      .tabs-header,.action-row { display:none; }
+      code { color:#111; border-color:#ddd; }
+    }
+  </style>
 </head>
 <body>
-
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <span class="mark">The <b>Summer Project</b></span>
-      <span class="when">Jul–Aug 2026</span>
-      <button class="print-btn" type="button" onclick="window.print()" title="Print this tab / save it as a PDF">⎙ Print tab</button>
-    </div>
-    <div class="tabs" role="tablist" aria-label="Sections">
-      <button class="tab" data-accent="neutral" role="tab" aria-controls="panel-start" id="tab-start" aria-selected="true">Start here</button>
-      <button class="tab" data-accent="ammar" role="tab" aria-controls="panel-ammar" id="tab-ammar" aria-selected="false"><span class="dot" style="background:var(--ammar)"></span>Ammar · 15</button>
-      <button class="tab" data-accent="basil" role="tab" aria-controls="panel-basil" id="tab-basil" aria-selected="false"><span class="dot" style="background:var(--basil)"></span>Basil · 13</button>
-      <button class="tab" data-accent="moh" role="tab" aria-controls="panel-moh" id="tab-moh" aria-selected="false"><span class="dot" style="background:var(--moh)"></span>Mohammad · 10</button>
-      <button class="tab" data-accent="neutral" role="tab" aria-controls="panel-rewards" id="tab-rewards" aria-selected="false">Rewards &amp; rules</button>
-      <button class="tab" data-accent="neutral" role="tab" aria-controls="panel-parents" id="tab-parents" aria-selected="false">For parents</button>
-    </div>
-  </div>
-</div>
-
-<main class="wrap">
-
-<!-- START HERE -->
-<section class="panel active" id="panel-start" role="tabpanel" aria-labelledby="tab-start">
-  <div class="hero">
-    <h1>Build something <em>real</em><br>this summer.</h1>
-    <p class="lede">Three brothers. Three channels. <strong>One real thing each</strong> — built, branded, and shown to the family by the end of August. The software is just the toolbox. The thing you make is the point.</p>
-    <div class="mini-channels">
-      <span class="mc"><span class="dot" style="background:var(--ammar)"></span>Ammar · Car films</span>
-      <span class="mc"><span class="dot" style="background:var(--basil)"></span>Basil · Roblox channel</span>
-      <span class="mc"><span class="dot" style="background:var(--moh)"></span>Mohammad · Story shorts</span>
-    </div>
-  </div>
-
-  <div class="sub-head"><span class="eyebrow">How it works</span><h2>Every channel makes four moves.</h2></div>
-  <div class="phases">
-    <div class="phase"><span class="num">01</span><h3>Learn</h3><p>Watch lots of videos like the ones you want to make. Seeing great examples shows you what makes them good — and gives you your own ideas.</p><span class="verb"><span class="sb">Skill building:</span> Knowledge</span></div>
-    <div class="phase"><span class="num">02</span><h3>Build</h3><p>Start making your thing. Save your favourite looks in a mood board or your sheet, then create your first pieces. You learn each tool right when you need it.</p><span class="verb"><span class="sb">Skill building:</span> Ownership</span></div>
-    <div class="phase"><span class="num">03</span><h3>Tell</h3><p>Give it a name, a logo, and a caption. This is how people know what your thing is — and why it's worth watching.</p><span class="verb"><span class="sb">Skill building:</span> Communication</span></div>
-    <div class="phase"><span class="num">04</span><h3>Show</h3><p>On Premiere Night you show the family your channel and explain what you made and learned. Sharing your work out loud is a real skill too.</p><span class="verb"><span class="sb">Skill building:</span> Presentation</span></div>
-  </div>
-
-  <div class="sub-head"><span class="eyebrow">The system</span><h2>Two things make it real.</h2></div>
-  <div class="sys-grid">
-    <div class="sys"><span class="tag">Drive folder</span><h3>Your folder, shared with us</h3><p>Each of you owns one folder in Google Drive and shares it with Mum &amp; Baba. That shared folder is proof your work is real. We're your <strong>stakeholders</strong> — you report to us.</p></div>
-    <div class="sys"><span class="tag">Project sheet</span><h3>Your command centre</h3><p>The sheet holds your ideas, your plan, and what you've posted. Writing it down and tracking it <em>is</em> leadership — making the invisible visible.</p></div>
-  </div>
-
-  <div class="sub-head"><span class="eyebrow">The two months</span><h2>July builds it. August ships it.</h2></div>
-  <div class="timeline">
-    <div class="stop"><span class="when">July</span><h3>Learn + Build</h3><p>Study your genre, set up your folder and sheet, ship your first 2–3 pieces.</p></div>
-    <div class="stop"><span class="when">August</span><h3>Ship + Refine</h3><p>Post on a schedule. Polish your brand. Find your rhythm.</p></div>
-    <div class="stop finale"><span class="when">Late August</span><h3>Premiere Night 🎬</h3><p>Each creator presents his channel and what he made.</p></div>
-  </div>
-</section>
-
-<!-- AMMAR -->
-<section class="panel" id="panel-ammar" role="tabpanel" aria-labelledby="tab-ammar" style="--c:var(--ammar)">
-  <div class="son-head" style="--c:var(--ammar)">
-    <span class="son-id">Channel 01 — Faceless car films</span>
-    <h1>Ammar <span class="age">/ 15</span></h1>
-    <p class="son-niche">Cinematic car films — no face, no voice. The whole brand lives in the craft: the shots, the colour grade, the edit. That's your edge.</p>
-    <div class="platforms"><span class="plat">Instagram</span><span class="plat">TikTok</span><span class="plat">Project management in Drive</span></div>
-  </div>
-
-  <div class="prog-wrap" style="--c:var(--ammar)">
-    <div class="prog-top"><span class="prog-label">Your progress</span><span class="prog-count" data-count>0 of 0 done</span></div>
-    <div class="prog-track"><div class="prog-bar"></div></div>
-  </div>
-
-  <div class="stage" style="--c:var(--ammar)">
-    <div class="stage-head"><span class="stage-num">1</span><h3>Set up your studio</h3><span class="stage-time">Week 1 · ~2 days</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>drive.google.com</code> and sign in</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Click <strong>New → Folder</strong>, name it <code>Ammar — Car Studio</code></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Right-click the folder → <strong>Share</strong> → add Mum &amp; Baba → set them to <strong>Editor</strong> → Send</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Inside it, click <strong>New → Google Sheets</strong>, name it <code>Ammar — Project Sheet</code></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make 4 tabs (right-click → Rename): <strong>Ideas Backlog · Production Tracker · Showroom List · Post Calendar</strong></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Production Tracker</strong>, add 4 columns: Idea · Status · Platform · Date<small>Status will be one of: Filming → Editing → Posted</small></span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--ammar)">
-    <div class="stage-head"><span class="stage-num">2</span><h3>Learn the genre</h3><span class="stage-time">Week 1</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Search <em>"car edits"</em> or <em>"cinematic car"</em> on Instagram &amp; TikTok</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Find <strong>3 accounts</strong> you love and follow them</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Ideas Backlog</strong>, note for each: their shots, their colour look, their caption style</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick the <strong>one look</strong> you want to copy first</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--ammar)">
-    <div class="stage-head"><span class="stage-num">3</span><h3>Set up the channel</h3><span class="stage-time">Week 1</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Decide your <strong>handle</strong> — keep it the same on both apps</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Create a <strong>new Instagram</strong> account for the channel (not your personal one)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Create a <strong>TikTok</strong> with the same handle</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Canva</strong>, make a logo + profile picture (search a "car logo" template)</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--ammar)">
-    <div class="stage-head"><span class="stage-num">4</span><h3>Your first real film</h3><span class="stage-time">Week 2</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick a car you can film (family car, a relative's, or a parked one with permission)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Film <strong>3 shots only:</strong> a slow walk-around, a close detail (wheel/badge), and a reveal</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Open <strong>CapCut → New project</strong> and import your clips</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Trim each clip to <strong>2–4 seconds</strong> and add one trending sound</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Apply your <strong>colour grade / filter</strong> — this is your signature, take your time</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Export in <strong>HD</strong></span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--ammar)">
-    <div class="stage-head"><span class="stage-num">5</span><h3>Your first AI film — OpenArt Director</h3><span class="stage-time">Week 2–3</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Watch one tutorial first — search <em>"OpenArt Director tutorial"</em> on YouTube</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>openart.ai</code>, sign in, open the <strong>Director</strong> feature</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write a prompt for a car scene you want, then generate</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick the best result and download it</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--ammar)">
-    <div class="stage-head"><span class="stage-num">6</span><h3>Brand it &amp; post</h3><span class="stage-time">Week 3</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write a caption in your own words — one line + 2–3 hashtags</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Send the clip to the <strong>family chat</strong> first 💪 <small>This is your confidence rung — start here before the world sees it.</small></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post to Instagram + TikTok</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Log it in <strong>Post Calendar</strong> and mark it <strong>Posted</strong> in your Tracker</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--ammar)">
-    <div class="stage-head"><span class="stage-num">7</span><h3>Find your rhythm</h3><span class="stage-time">August</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post <strong>1–2 videos a week</strong></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt"><strong>Visit a real showroom</strong> and politely ask if you can film for a hobby project<small>This is your biggest win of the summer — bigger than any edit. Add showrooms to your Showroom List first.</small></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Keep your Tracker updated every single time</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Before Premiere Night, pick your <strong>3 best videos</strong> to show</span></label></li>
-    </ul>
-  </div>
-
-  <div class="toolkit"><span class="label">Your toolkit</span><div class="toolchips"><span class="toolchip">Google Sheets</span><span class="toolchip">Google Drive</span><span class="toolchip">CapCut</span><span class="toolchip">OpenArt · Director</span><span class="toolchip">Canva</span><span class="toolchip">Instagram</span><span class="toolchip">TikTok</span></div></div>
-
-  <div class="lever" style="--c:var(--ammar)"><span class="label">Your one lever — courage</span><p>Walking into a showroom and asking to film is the real win — bigger than any edit. Your confidence ladder is yours: family chat → faceless post → captions in your voice → (only if you choose) your voice. One rung at a time.</p></div>
-</section>
-
-<!-- BASIL -->
-<section class="panel" id="panel-basil" role="tabpanel" aria-labelledby="tab-basil" style="--c:var(--basil)">
-  <div class="son-head" style="--c:var(--basil)">
-    <span class="son-id">Channel 02 — Roblox strategy</span>
-    <h1>Basil <span class="age">/ 13</span></h1>
-    <p class="son-niche">A Roblox channel you <em>write</em> — strategy breakdowns, how-to-win clips, your own point of view in public. Plus a weekly "Basil Teaches."</p>
-    <div class="platforms"><span class="plat">YouTube / TikTok</span><span class="plat">Roblox</span></div>
-  </div>
-
-  <div class="prog-wrap" style="--c:var(--basil)">
-    <div class="prog-top"><span class="prog-label">Your progress</span><span class="prog-count" data-count>0 of 0 done</span></div>
-    <div class="prog-track"><div class="prog-bar"></div></div>
-  </div>
-
-  <div class="streak" id="basil-streak">
-    <span class="s-label">Weeks shipped<small>Protect the chain — add one each week you post.</small></span>
-    <div class="s-ctrl">
-      <button type="button" data-streak="-1" aria-label="Remove a week">−</button>
-      <span class="s-val" data-streak-val>0</span>
-      <button type="button" data-streak="1" aria-label="Add a week">＋</button>
-    </div>
-  </div>
-
-  <div class="stage" style="--c:var(--basil)">
-    <div class="stage-head"><span class="stage-num">1</span><h3>Set up your studio</h3><span class="stage-time">Week 1</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>drive.google.com</code> → <strong>New → Folder</strong> → name it <code>Basil — Roblox Channel</code></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Right-click → <strong>Share</strong> → add Mum &amp; Baba as <strong>Editor</strong></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Inside it: <strong>New → Google Sheets</strong> → name it <code>Basil — Project Sheet</code></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make 3 tabs: <strong>Content Calendar · Views &amp; Wins · Streak</strong></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Streak</strong>, write each date you post — the goal is an unbroken chain<small>Your streak matters more than your views. Protect it.</small></span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--basil)">
-    <div class="stage-head"><span class="stage-num">2</span><h3>Name &amp; brand your channel</h3><span class="stage-time">Week 1</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Decide what your channel teaches (e.g. <em>"how to win at Bedwars / ASTD"</em>)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick a channel name</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">In <strong>Canva</strong>, make a logo + banner (search "gaming logo")</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Create the channel — pick <strong>one</strong> app to start (YouTube or TikTok)</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--basil)">
-    <div class="stage-head"><span class="stage-num">3</span><h3>Write your first strategy clip</h3><span class="stage-time">Week 1–2</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick <strong>one</strong> thing you're good at (a Bedwars rush, an ASTD setup)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write <strong>3–5 short points</strong>: what to do, in order, to win<small>This is your script. Read it before you record.</small></span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--basil)">
-    <div class="stage-head"><span class="stage-num">4</span><h3>Record &amp; edit</h3><span class="stage-time">Week 2</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Screen-record yourself playing (phone or PC recorder)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Open <strong>CapCut</strong> → import the recording → cut out the boring parts</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Add <strong>text on screen</strong> for each of your tips</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Add your voice or captions explaining the strategy, then export</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--basil)">
-    <div class="stage-head"><span class="stage-num">5</span><h3>Post &amp; track</h3><span class="stage-time">Week 2</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write a title that says what they'll learn (<em>"How to win Bedwars rushes"</em>)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post it</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Log it in <strong>Content Calendar + Views &amp; Wins</strong>, then mark today on your <strong>Streak</strong> ✓</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--basil)">
-    <div class="stage-head"><span class="stage-num">6</span><h3>Basil Teaches — weekly ritual</h3><span class="stage-time">Every week</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick one thing to research (a swimming technique, a game mechanic — anything)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Ask an <strong>AI</strong> to explain it simply and give you the key points</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Turn it into <strong>3 clear points</strong> you can teach</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Teach the family for <strong>3 minutes</strong> — kitchen table is fine<small>Researching then teaching makes you the one who knows. That's your superpower.</small></span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--basil)">
-    <div class="stage-head"><span class="stage-num">7</span><h3>Build the habit</h3><span class="stage-time">August</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post <strong>once a week</strong> — protect your streak above everything</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Each week check <strong>Views &amp; Wins</strong>: which video did best? Make more like it</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Before Premiere Night, pick your <strong>best clip + best "Basil Teaches"</strong></span></label></li>
-    </ul>
-  </div>
-
-  <div class="toolkit"><span class="label">Your toolkit</span><div class="toolchips"><span class="toolchip">Google Sheets</span><span class="toolchip">Google Drive</span><span class="toolchip">CapCut</span><span class="toolchip">Canva</span><span class="toolchip">AI research</span><span class="toolchip">Roblox</span></div></div>
-
-  <div class="lever" style="--c:var(--basil)"><span class="label">Your one lever — consistency</span><p>Your win isn't views — it's <strong>did I ship this week?</strong> Keep your streak alive and protect it. Shipped beats perfect, every single time.</p></div>
-</section>
-
-<!-- MOHAMMAD -->
-<section class="panel" id="panel-moh" role="tabpanel" aria-labelledby="tab-moh" style="--c:var(--moh)">
-  <div class="son-head" style="--c:var(--moh)">
-    <span class="son-id">Channel 03 — Already live</span>
-    <h1>Mohammad <span class="age">/ 10</span></h1>
-    <p class="son-niche">You already run a real channel — 100 subscribers, 56,000 views. This summer we make it <em>intentional</em>: a proper brand, plus an AI Harry Potter story series.</p>
-    <div class="platforms"><span class="plat">YouTube Shorts</span></div>
-  </div>
-
-  <div class="prog-wrap" style="--c:var(--moh)">
-    <div class="prog-top"><span class="prog-label">Your progress</span><span class="prog-count" data-count>0 of 0 done</span></div>
-    <div class="prog-track"><div class="prog-bar"></div></div>
-  </div>
-
-  <div class="stage" style="--c:var(--moh)">
-    <div class="stage-head"><span class="stage-num">1</span><h3>Set up</h3><span class="stage-time">Week 1</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Go to <code>drive.google.com</code> → <strong>New → Folder</strong> → name it <code>Mohammad — Channel</code></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Right-click → <strong>Share</strong> → add Mum &amp; Baba</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Inside it: <strong>New → Google Sheets</strong> → name it <code>Video Ideas</code> → list ideas as you get them</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--moh)">
-    <div class="stage-head"><span class="stage-num">2</span><h3>Brand up your channel</h3><span class="stage-time">Week 1</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Open <strong>Canva</strong></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make a <strong>YouTube banner</strong> (search the "YouTube banner" template) with your channel name</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make a <strong>logo / profile picture</strong></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick <strong>one thumbnail style</strong> (same colours + font) you'll use every time</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Upload them to your channel</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--moh)">
-    <div class="stage-head"><span class="stage-num">3</span><h3>Plan your Harry Potter series</h3><span class="stage-time">Week 1–2</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Think of <strong>5 "what if" ideas</strong> (e.g. <em>"what if Harry was in Slytherin?"</em>)</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Write them in your <strong>Video Ideas</strong> sheet</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick your favourite to make first</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--moh)">
-    <div class="stage-head"><span class="stage-num">4</span><h3>Make your first AI story</h3><span class="stage-time">Week 2</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Ask an <strong>AI</strong> to help write a short "what if" Harry Potter story</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Pick the best bits — keep it short</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Build it in <strong>CapCut</strong> as a short — text + images/clips + music</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Use your <strong>same thumbnail style</strong>, then export</span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--moh)">
-    <div class="stage-head"><span class="stage-num">5</span><h3>Post</h3><span class="stage-time">Week 2</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Post it to <strong>YouTube Shorts</strong></span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Tell us: <strong>who is this video for?</strong><small>That one question turns "making videos" into "running a channel."</small></span></label></li>
-    </ul>
-  </div>
-
-  <div class="stage" style="--c:var(--moh)">
-    <div class="stage-head"><span class="stage-num">6</span><h3>Keep going</h3><span class="stage-time">July–August</span></div>
-    <ul class="steps">
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make <strong>one video a week</strong> from your ideas list</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Make each thumbnail match your style</span></label></li>
-      <li class="step"><label><input type="checkbox"><span class="box"><svg viewBox="0 0 12 12"><path d="M1 6l3.5 3.5L11 2" stroke="#141110" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="txt">Before Premiere Night, pick your <strong>favourite video</strong> + tell us why it's your best</span></label></li>
-    </ul>
-  </div>
-
-  <div class="toolkit"><span class="label">Your toolkit</span><div class="toolchips"><span class="toolchip">Canva</span><span class="toolchip">CapCut</span><span class="toolchip">AI stories</span><span class="toolchip">YouTube</span><span class="toolchip">Google Sheets</span></div></div>
-
-  <div class="lever" style="--c:var(--moh)"><span class="label">Your one lever — intention</span><p>You've published more than anyone here. Before each video, ask two questions: <strong>who is this for, and why this one?</strong> That's the jump from making videos to running a channel — and you can do it while it still feels like a game.</p></div>
-</section>
-
-<!-- REWARDS & RULES -->
-<section class="panel" id="panel-rewards" role="tabpanel" aria-labelledby="tab-rewards">
-  <div class="reward">
-    <div class="inner">
-      <span class="eyebrow">The bounty</span>
-      <h2>Hit the milestone, unlock the reward.</h2>
-      <p>Every video you publish that reaches <strong>3,000 views</strong> earns a reward from Mum &amp; Baba. Any channel. Any video. Real views, real reward.</p>
-      <div class="big">3,000</div>
-      <div class="big-sub">views on a published video = reward unlocked</div>
-      <div class="meter"><div class="fill" data-fill="100"></div></div>
-      <div class="meter-labels"><span>0</span><span>1,500</span><span>3,000 → 🎉</span></div>
-      <div class="view-logger">
-        <label for="view-count">Log a video's views</label>
-        <input type="number" id="view-count" min="0" inputmode="numeric" placeholder="e.g. 1200">
-        <button type="button" id="view-check">Check</button>
-        <span class="hint">The bar fills toward 3,000. Hit it and the reward unlocks — once.</span>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow">Your Summer Mission</div>
+          <h1>Summer Independence Project Lab</h1>
+          <p class="lead">This is your reference point for the summer. Each of you will build one real project connected to what you already enjoy. You will plan it, organise it, create real work, publish or share safely, improve it, and collect evidence of what you made.</p>
+          <div class="hero-meta">
+            <span class="pill">6-week project system</span>
+            <span class="pill">3 work sessions per week</span>
+            <span class="pill">Real tools, not pretend homework</span>
+            <span class="pill">Create • Publish • Improve</span>
+          </div>
+        </div>
+        <div class="hero-grid" aria-label="Four project tracks">
+          <div class="mini-profile"><div class="emoji">🚗</div><div><strong>Ammar, 15</strong><span>Car content creation, showroom visits, edits, captions, photography.</span></div></div>
+          <div class="mini-profile"><div class="emoji">🎮</div><div><strong>Basil, 14</strong><span>Roblox research hub, mini guides, Discord updates, sports/cooking side projects.</span></div></div>
+          <div class="mini-profile"><div class="emoji">✨</div><div><strong>Mohammad, 10</strong><span>Creative mini studio, Harry Potter-inspired publication, Roblox edits, YouTube Shorts.</span></div></div>
+          <div class="mini-profile"><div class="emoji">🌙</div><div><strong>Raja</strong><span>Islamic AI storytelling, scripts, prompts, video scenes, lessons, family showcase.</span></div></div>
+        </div>
       </div>
-      <div class="reward-note"><span class="pin">Set by Mum &amp; Baba</span><p>The reward itself is yours to set — agree it with the boys up front so the target feels real and worth chasing.</p></div>
-    </div>
+    </header>
+
+    <section class="section-card" id="how-it-works">
+      <div class="section-heading">
+        <div class="num">1</div>
+        <div>
+          <h2>Read This First: How This Project Will Work</h2>
+          <p>This is not only about presenting at the end. Your project works like a small real-world studio. You will use tools to organise your ideas, make things, publish or share your work during the summer, and improve based on feedback.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="info-card"><span class="tag cyan">Your role</span><h3>You are the project owner</h3><p>You choose the direction, update your tracker, save your files properly, ask for help when needed, and show progress every week.</p></div>
+        <div class="info-card"><span class="tag orange">Family role</span><h3>Mum & Baba are your project sponsors</h3><p>They will review, advise, approve public posts, and help you stay safe. They will not do the project for you.</p></div>
+      </div>
+      <div class="flow" aria-label="Project process">
+        <div class="flow-step"><div class="icon-circle">⭐</div><b>1. Choose</b><p>Start with what you already care about.</p></div>
+        <div class="flow-step"><div class="icon-circle">📝</div><b>2. Propose</b><p>Write a simple project proposal so your idea is clear.</p></div>
+        <div class="flow-step"><div class="icon-circle">📊</div><b>3. Track</b><p>Use Sheets as your daily project tracker.</p></div>
+        <div class="flow-step"><div class="icon-circle">🎨</div><b>4. Create</b><p>Use Canva, CapCut, Docs, or your chosen platform to make real work.</p></div>
+        <div class="flow-step"><div class="icon-circle">📣</div><b>5. Publish / Share</b><p>Post safely or share selected updates with family or approved spaces.</p></div>
+        <div class="flow-step"><div class="icon-circle">📈</div><b>6. Improve</b><p>Use feedback and your own judgement to make the next version better.</p></div>
+      </div>
+    </section>
+
+    <section class="section-card" id="skills">
+      <div class="section-heading">
+        <div class="num">2</div>
+        <div>
+          <h2>Skills You Are Building Through These Activities</h2>
+          <p>The apps are not the main goal. You are using the apps to practise habits that matter in real life: planning, communication, creative judgement, digital organisation, problem-solving, and self-management.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="skill-card"><span class="tag cyan">Knowledge</span><h3>You learn how to research</h3><p>You will collect facts, compare examples, understand your topic, and turn interest into useful knowledge.</p></div>
+        <div class="skill-card"><span class="tag green">Leadership</span><h3>You learn ownership</h3><p>You will decide what to do next, manage your own progress, solve small problems, and follow through.</p></div>
+        <div class="skill-card"><span class="tag orange">Communication</span><h3>You learn how to explain</h3><p>You will write captions, guides, updates, reflections, and short check-ins so people understand your work.</p></div>
+        <div class="skill-card"><span class="tag purple">Organisation</span><h3>You learn digital structure</h3><p>You will use folders, file names, trackers, and links so your work does not get lost.</p></div>
+        <div class="skill-card"><span class="tag cyan">Creativity</span><h3>You learn how to make</h3><p>You will create videos, designs, mood boards, guides, comics, edits, or posts with a clear purpose.</p></div>
+        <div class="skill-card"><span class="tag green">Real-world confidence</span><h3>You learn how to publish and improve</h3><p>You will share work safely, receive feedback, improve your next version, and become more independent.</p></div>
+      </div>
+    </section>
+
+
+    <section class="section-card" id="real-world">
+      <div class="section-heading">
+        <div class="num">3</div>
+        <div>
+          <h2>How This Helps in the Real World</h2>
+          <p>These projects are fun, but they are also training you for real life. You are practising how people work in companies, creative studios, schools, businesses, and online platforms.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="info-card"><span class="tag cyan">Project management</span><h3>You learn how to manage work</h3><p>You will break a big idea into smaller tasks, set dates, track status, and finish work instead of only talking about ideas.</p></div>
+        <div class="info-card"><span class="tag green">Digital organisation</span><h3>You learn how to keep files properly</h3><p>Drive folders, file names, links, and trackers teach you how to keep your work organised and easy to find.</p></div>
+        <div class="info-card"><span class="tag orange">Communication</span><h3>You learn how to explain your thinking</h3><p>Captions, updates, scripts, Discord guides, family check-ins, and reflections help you communicate clearly.</p></div>
+        <div class="info-card"><span class="tag purple">Creative judgement</span><h3>You learn how to choose a direction</h3><p>Mood boards and examples help you decide what looks good, what feels clear, and what fits your project.</p></div>
+        <div class="info-card"><span class="tag cyan">Confidence</span><h3>You learn by taking small public steps</h3><p>You do not need to be loud or perfect. You build confidence by creating, sharing safely, receiving feedback, and improving.</p></div>
+        <div class="info-card"><span class="tag green">Independence</span><h3>You learn how to own responsibility</h3><p>You will know your next task, where your files are saved, what you need help with, and what you are improving next.</p></div>
+      </div>
+    </section>
+
+    <section class="section-card" id="rhythm">
+      <div class="section-heading">
+        <div class="num">4</div>
+        <div>
+          <h2>Summer Work Rhythm</h2>
+          <p>Do not work randomly. Follow a simple rhythm every week: plan, create, publish or share safely, then improve the next version.</p>
+        </div>
+      </div>
+      <div class="timeline" aria-label="Six-week summer work rhythm">
+        <div class="week-card"><span class="week-label">Week 1</span><div class="week-icon">🧭</div><h3>Define & Set Up</h3><p>Create your Drive folder, proposal, tracker, and Canva mood board.</p></div>
+        <div class="week-card"><span class="week-label">Week 2</span><div class="week-icon">🔎</div><h3>Research & Gather</h3><p>Collect examples, learn the genre, save references, and plan your first output.</p></div>
+        <div class="week-card"><span class="week-label">Week 3</span><div class="week-icon">✏️</div><h3>Create Round 1</h3><p>Make your first video, guide, story, design, post, or mini publication.</p></div>
+        <div class="week-card"><span class="week-label">Week 4</span><div class="week-icon">📣</div><h3>Publish & Share</h3><p>Share safely with family, approved platforms, or approved community spaces.</p></div>
+        <div class="week-card"><span class="week-label">Week 5</span><div class="week-icon">📈</div><h3>Improve & Expand</h3><p>Use feedback, analytics, or your own review to make the next version better.</p></div>
+        <div class="week-card"><span class="week-label">Week 6</span><div class="week-icon">🗂️</div><h3>Build the Portfolio</h3><p>Collect your best work, final links, reflections, and proof of progress.</p></div>
+      </div>
+      <div class="rhythm-cycle">
+        <div class="rhythm-mini-card"><span class="tag cyan">Session 1</span><h3>Plan + research</h3><p>Write today’s goal in Sheets. Gather notes, examples, facts, or references.</p></div>
+        <div class="rhythm-mini-card"><span class="tag orange">Session 2</span><h3>Create</h3><p>Film, edit, design, write, build, or make one clear piece of work.</p></div>
+        <div class="rhythm-mini-card"><span class="tag purple">Session 3</span><h3>Publish / improve</h3><p>Post safely, share privately, improve a draft, or save final work properly.</p></div>
+        <div class="rhythm-mini-card"><span class="tag green">Weekly check-in</span><h3>Show progress</h3><p>Show your tracker, one saved file, one thing you made, and your next step.</p></div>
+      </div>
+    </section>
+
+    <section class="section-card" id="tools">
+      <div class="section-heading">
+        <div class="num">5</div>
+        <div>
+          <h2>Your Tool System</h2>
+          <p>Each tool has a specific job. Do not use tools randomly. Use them like a small professional workflow.</p>
+        </div>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-card"><div class="tool-icon">🗂️</div><h3>Google Drive</h3><p>Your project headquarters.</p><ul><li>Folders</li><li>Final files</li><li>Proof of work</li></ul></div>
+        <div class="tool-card"><div class="tool-icon">📝</div><h3>Google Docs</h3><p>Your written thinking.</p><ul><li>Project proposal</li><li>Scripts</li><li>Reflections</li></ul></div>
+        <div class="tool-card"><div class="tool-icon">📊</div><h3>Google Sheets</h3><p>Your daily tracker.</p><ul><li>Tasks</li><li>Status</li><li>Dates</li><li>Links</li></ul></div>
+        <div class="tool-card"><div class="tool-icon">🎨</div><h3>Canva</h3><p>Your visual board.</p><ul><li>Mood board</li><li>Templates</li><li>Guides/cards</li></ul></div>
+        <div class="tool-card"><div class="tool-icon">🎬</div><h3>CapCut</h3><p>Your editing studio.</p><ul><li>Video cuts</li><li>Captions</li><li>Effects</li><li>Colour look</li></ul></div>
+        <div class="tool-card"><div class="tool-icon">💬</div><h3>Discord</h3><p>Your structured sharing space.</p><ul><li>Mini updates</li><li>Guides</li><li>Feedback</li></ul></div>
+        <div class="tool-card"><div class="tool-icon">📱</div><h3>Publishing Apps</h3><p>Your public or private output.</p><ul><li>Instagram</li><li>TikTok</li><li>YouTube Shorts</li></ul></div>
+        <div class="tool-card"><div class="tool-icon">🤖</div><h3>AI Tools</h3><p>Your assistant, not your replacement.</p><ul><li>Story drafts</li><li>Prompts</li><li>AI video scenes</li><li>Review notes</li></ul></div>
+      </div>
+
+      <div class="template-box">
+        <h3>Before you start: write your simple project proposal in Google Docs</h3>
+        <p class="small-note">Create a Google Doc called <code>Your Name – Project Proposal</code>. Copy these headings and answer each one in short, clear sentences.</p>
+        <div class="template-grid">
+          <div class="template-line"><b>Project name:</b> What is your project called?</div>
+          <div class="template-line"><b>My mission:</b> What will you make, publish, or share?</div>
+          <div class="template-line"><b>Why I chose this:</b> Why does this interest you?</div>
+          <div class="template-line"><b>Audience:</b> Who is this for?</div>
+          <div class="template-line"><b>Tools:</b> Which tools will you use?</div>
+          <div class="template-line"><b>Weekly output:</b> What will you create each week?</div>
+          <div class="template-line"><b>Safety rules:</b> What will you not show or share?</div>
+          <div class="template-line"><b>Finished means:</b> What will prove you completed the project?</div>
+        </div>
+      </div>
+
+      <div class="template-box">
+        <h3>Your Google Sheets daily tracker should have these columns</h3>
+        <p class="small-note">Use this tracker at the start and end of every work session. It is how you prove progress.</p>
+        <table class="output-table">
+          <thead><tr><th>Column</th><th>What you write</th></tr></thead>
+          <tbody>
+            <tr><td>Date</td><td>The day you worked.</td></tr>
+            <tr><td>Session Goal</td><td>One clear task for today.</td></tr>
+            <tr><td>Task Type</td><td>Research, create, edit, publish, improve, organise.</td></tr>
+            <tr><td>Status</td><td>Not Started, In Progress, Stuck, Ready, Posted, Improved, Done.</td></tr>
+            <tr><td>Tool Used</td><td>Drive, Docs, Sheets, Canva, CapCut, Discord, Instagram, TikTok, YouTube.</td></tr>
+            <tr><td>Link / File Name</td><td>Paste the Drive file link or write where it is saved.</td></tr>
+            <tr><td>What I Learned</td><td>One useful thing you learned.</td></tr>
+            <tr><td>Next Step</td><td>The next task you will do.</td></tr>
+            <tr><td>Help Needed?</td><td>Write exactly what you need help with.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section-card" id="starter">
+      <div class="section-heading">
+        <div class="num">6</div>
+        <div>
+          <h2>Starter Setup for All Project Owners</h2>
+          <p>Do these steps before starting your individual project. This setup makes your project easier to manage, and Raja will follow the same structure for his AI storytelling mission.</p>
+        </div>
+      </div>
+      <div class="task-block" data-owner="shared">
+        <div class="block-head"><span class="step-badge">✓</span><h3>Universal setup checklist</h3><span class="time">Week 1 • first session</span></div>
+        <ul class="tasks">
+          <li><input type="checkbox" data-check="shared-drive"><label>Go to <code>drive.google.com</code> and create your main project folder.<small>Name it clearly: <code>Ammar – Car Studio</code>, <code>Basil – Research Hub</code>, <code>Mohammad – Creative Mini Studio</code>, or <code>Raja – Islamic AI Stories</code>.</small></label></li>
+          <li><input type="checkbox" data-check="shared-share"><label>Share the folder with Mum & Baba and set them as <code>Editor</code>.<small>This lets them review, help, and approve safely when needed.</small></label></li>
+          <li><input type="checkbox" data-check="shared-doc"><label>Create a Google Doc called <code>Your Name – Project Proposal</code>.<small>Use the proposal headings above. Keep it short. One page is enough.</small></label></li>
+          <li><input type="checkbox" data-check="shared-sheet"><label>Create a Google Sheet called <code>Your Name – Project Tracker</code>.<small>This is your daily tracker. You update it every time you work.</small></label></li>
+          <li><input type="checkbox" data-check="shared-canva"><label>Create a Canva design or board called <code>Your Name – Mood Board</code>.<small>Use it to collect visual inspiration, colours, layouts, examples, and ideas. Do not copy exactly; use it to learn the style.</small></label></li>
+          <li><input type="checkbox" data-check="shared-folder"><label>Create folders for <code>Research</code>, <code>Drafts</code>, <code>Final Work</code>, <code>Published / Shared</code>, and <code>Reflections</code>.<small>Every file should have a place. Messy files make projects harder.</small></label></li>
+          <li><input type="checkbox" data-check="shared-first-row"><label>Add your first row in the tracker before you start working.<small>Write today’s goal, task type, tool used, and next step.</small></label></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="tabs-card" id="projects">
+      <div class="tabs-header" role="tablist" aria-label="Project tabs">
+        <button class="tab-btn active" data-tab="ammar" role="tab" aria-selected="true">🚗 Ammar | 15</button>
+        <button class="tab-btn" data-tab="basil" role="tab" aria-selected="false">🎮 Basil | 14</button>
+        <button class="tab-btn" data-tab="mohammad" role="tab" aria-selected="false">✨ Mohammad | 10</button>
+        <button class="tab-btn" data-tab="raja" role="tab" aria-selected="false">🌙 Raja | AI Stories</button>
+      </div>
+
+      <article class="tab-panel active" id="ammar" role="tabpanel">
+        <div class="profile-head">
+          <div><h2>Ammar — Car Content Creator</h2><p>You do not need to show your face or use your voice. Your project is to build a serious car content studio: learn the style, film real cars safely, edit short videos, write captions, publish selected posts, and build confidence through small private family vlogs.</p></div>
+          <div class="badge"><span class="big">🚗</span><strong>Project output</strong><span>Car reels, captions, photos, facts, showroom notes, mini portfolio.</span></div>
+        </div>
+        <div class="project-control">
+          <div class="mission"><h3>Project Mission</h3><p>Create a no-face, no-voice car content project using showroom visits, car facts, cinematic clips, photography, colour grading, captions, and later AI-assisted video edits.</p><div class="tool-chips"><span>Google Drive</span><span>Google Sheets</span><span>Google Docs</span><span>Canva mood board</span><span>CapCut</span><span>Instagram / TikTok</span><span>AI tools later</span></div></div>
+          <div class="progress-card"><strong>Ammar progress</strong><div class="progress-track"><div class="progress-fill" data-progress="ammar"></div></div><span data-count="ammar">0 tasks completed</span></div>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">1</span><h3>Set up your car studio</h3><span class="time">Week 1 • 1–2 days</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-1-1"><label>Create a Drive folder called <code>Ammar – Car Studio</code>.<small>Inside it, create: Research, Footage, Photos, CapCut Edits, Captions, Published, Showrooms, Analytics, Reflections.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-1-2"><label>Create your Google Doc proposal.<small>Answer: what type of car content you will make, who it is for, your no-face/no-voice rule, your weekly output, and what finished means.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-1-3"><label>Create your Google Sheet with 4 tabs: <code>Ideas Backlog</code>, <code>Production Tracker</code>, <code>Showroom List</code>, <code>Post Calendar</code>.<small>This is the control centre for your project.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-1-4"><label>In <code>Production Tracker</code>, add columns: Idea, Status, Platform, Date, Location, Footage Needed, Caption, Link, Notes.<small>Status options: Idea → Planned → Filmed → Editing → Ready → Posted → Reviewed.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-1-5"><label>Create a Canva mood board called <code>Ammar – Car Visual Direction</code>.<small>Add examples of shots, colours, angles, caption styles, and car pages you like.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">2</span><h3>Choose your content pillars</h3><span class="time">Week 1</span></div>
+          <p class="task-intro">Define recurring types of content so you do not start from zero each time. These pillars will become your repeatable content system.</p>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-2-1"><label>Choose your 4 main content pillars and add them to your <code>Ideas Backlog</code>.<small>Use: Car Facts, Car Care, Showroom Visits, and Photography Edits.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-2-2"><label>Car Facts pillar: create 5 ideas about model, engine, price range, features, and what makes the car interesting.<small>Example: “3 facts about the Toyota Supra most people miss.”</small></label></li>
+            <li><input type="checkbox" data-check="ammar-2-3"><label>Car Care pillar: create 5 ideas about cleaning, maintenance, tyre care, interior care, or simple ownership tips.<small>Keep it useful and safe. Do not give mechanical advice unless you have checked it properly.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-2-4"><label>Showroom Visits pillar: plan visual walkthroughs without face or voice.<small>Use clean shots: exterior, interior, dashboard, lights, wheels, badge, closing shot.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-2-5"><label>Photography Edits pillar: create before-and-after colour grading examples.<small>Save original photos and edited photos in separate Drive folders so the improvement is visible.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-2-6"><label>Decide which pillar you will use for your first post.<small>Pick the easiest one first so you can build momentum quickly.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">3</span><h3>Learn the car content genre</h3><span class="time">Week 1</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-3-genre-1"><label>Search for <code>cinematic car edit</code>, <code>car reel</code>, <code>car showroom content</code>, and <code>car photography</code> on Instagram and TikTok.<small>Watch like a creator, not only like a viewer.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-3-genre-2"><label>Choose 5 accounts you like and record them in <code>Ideas Backlog</code>.<small>For each account, write: shot style, colour look, music style, caption style, and one thing you can learn.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-3-genre-3"><label>Create a basic shot list in Canva or Docs.<small>Include: front angle, side angle, wheel, badge/logo, interior, steering, dashboard, light detail, movement/pan shot, closing shot.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-3-genre-4"><label>Pick the first visual style you will try.<small>Example: clean luxury, dark cinematic, bright showroom, fast sport edit, calm premium edit.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">4</span><h3>Create your first no-face car video</h3><span class="time">Week 2</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-3-1"><label>Film 10 short clips of one car.<small>Keep each clip 3–5 seconds. No faces, no house location, no private plate details if avoidable.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-3-2"><label>Edit a 15–25 second video in CapCut.<small>Use clean cuts, simple text, one music track, and one colour look. Do not over-edit.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-3-3"><label>Save the final video in Drive and paste the file link in your tracker.<small>Update the status to Ready.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-3-4"><label>Write 3 caption options.<small>One informative, one quote-style, one short cinematic caption.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-3-5"><label>Share it privately with family first.<small>Ask: “Is the edit clear? Is the caption good? What should I improve?”</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">5</span><h3>Plan showroom visits safely</h3><span class="time">Week 2–3</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-4-1"><label>Build your <code>Showroom List</code> in Sheets.<small>Columns: Brand, Location, Contact, Permission Needed, Best Cars to Film, Visit Date, Status, Notes.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-4-2"><label>Write a polite permission script.<small>Example: “I am working on a summer car content project. May I film short clips of the cars for a no-face video?”</small></label></li>
+            <li><input type="checkbox" data-check="ammar-4-3"><label>Prepare a showroom shot checklist before the visit.<small>Exterior, interior, details, badge, wheel, lights, dashboard, wide shot, closing shot.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-4-4"><label>After each visit, save footage in the correct folder and update your tracker the same day.<small>If you wait too long, you will forget what you filmed.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">6</span><h3>Publish, learn, and improve</h3><span class="time">Week 3–6</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-5-1"><label>Create or prepare your Instagram and TikTok accounts with family approval.<small>Use a safe username, no personal school/location details, and a simple bio about car content.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-5-2"><label>Publish or schedule 1–2 selected posts per week.<small>Every post needs: final video/photo, caption, hashtags, platform, date, and link in the tracker.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-5-3"><label>Review each post after 48 hours.<small>Record views, likes, saves, comments, and one lesson learned in your Analytics tab.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-5-4"><label>Make one improvement in the next video.<small>Improve only one thing at a time: angle, pacing, colour, caption, music, or opening shot.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-5-5"><label>Keep your <code>Post Calendar</code> updated every week.<small>Track what you posted, what is still in editing, and what you will create next.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">7</span><h3>Build confidence gradually</h3><span class="time">Every week</span></div>
+          <p class="task-intro">Add communication without forcing public performance. The goal is to become more comfortable step by step, not to suddenly perform online.</p>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-confidence-1"><label>Send one mini vlog to the family chat every week.<small>Keep it private. It can be 20–40 seconds and can simply explain what you filmed, edited, or learned.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-confidence-2"><label>Start with hands-only or environment-only shots.<small>Examples: holding the camera, showing the car interior, walking into the showroom, pointing at a detail, or showing your editing screen.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-confidence-3"><label>Later, add short voice notes privately if you feel comfortable.<small>You can start with one sentence: “This week I filmed ___ and improved ___.”</small></label></li>
+            <li><input type="checkbox" data-check="ammar-confidence-4"><label>Use family feedback as practice, not judgement.<small>Ask one clear question each week: “What is one thing I should improve next?”</small></label></li>
+            <li><input type="checkbox" data-check="ammar-confidence-5"><label>When ready, move to the advanced final step: test one AI-assisted edit.<small>This should support your editing, not replace your own thinking or make fake car facts.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="ammar">
+          <div class="block-head"><span class="step-badge">8</span><h3>Advanced step: AI-assisted edit</h3><span class="time">Week 5–6 • optional</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="ammar-6-1"><label>Choose one existing video to improve with an AI-assisted workflow.<small>Use AI only to support ideas, captions, shot planning, or safe editing experiments. Do not fake facts about cars.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-6-2"><label>Compare the original version and improved version.<small>Write what changed: hook, pacing, colour, text, caption, or structure.</small></label></li>
+            <li><input type="checkbox" data-check="ammar-6-3"><label>Build your final car content portfolio folder.<small>Include your best videos, best photos, best captions, showroom notes, and one short reflection.</small></label></li>
+          </ul>
+        </div>
+
+        <table class="output-table">
+          <thead><tr><th>By the end of summer</th><th>What it proves</th></tr></thead>
+          <tbody>
+            <tr><td>6–10 car posts, reels, or photo edits</td><td>You can create real content consistently.</td></tr>
+            <tr><td>One organised Google Sheet tracker</td><td>You can manage a project like a small production workflow.</td></tr>
+            <tr><td>One Canva mood board and shot list</td><td>You can develop a visual direction before creating.</td></tr>
+            <tr><td>One private family vlog habit</td><td>You are building confidence without forcing public face/voice content.</td></tr>
+            <tr><td>Four clear content pillars</td><td>You know what to create next instead of starting from zero every time.</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="tab-panel" id="basil" role="tabpanel">
+        <div class="profile-head">
+          <div><h2>Basil — Roblox + Research Hub</h2><p>Your project turns gaming, sport, swimming, and cooking interests into organised research, mini guides, comparisons, and structured updates. Discord can be used, but only in safe, approved spaces and with clear communication.</p></div>
+          <div class="badge"><span class="big">🎮</span><strong>Project output</strong><span>Game research sheets, mini guides, Discord updates, side trackers.</span></div>
+        </div>
+        <div class="project-control">
+          <div class="mission"><h3>Project Mission</h3><p>Create a research hub where you compare games, write useful mini guides, share structured updates, and apply the same organisation to one real-life interest: basketball, swimming, or cooking.</p><div class="tool-chips"><span>Google Drive</span><span>Google Sheets</span><span>Google Docs</span><span>Canva guide board</span><span>Discord</span><span>Research</span><span>Mini guides</span></div></div>
+          <div class="progress-card"><strong>Basil progress</strong><div class="progress-track"><div class="progress-fill" data-progress="basil"></div></div><span data-count="basil">0 tasks completed</span></div>
+        </div>
+
+        <div class="task-block" data-owner="basil">
+          <div class="block-head"><span class="step-badge">1</span><h3>Set up your research hub</h3><span class="time">Week 1 • 1–2 days</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="basil-1-1"><label>Create a Drive folder called <code>Basil – Research Hub</code>.<small>Inside it, create: Roblox Notes, Mini Guides, Canva Graphics, Discord Updates, Basketball, Swimming, Cooking, Reflections.</small></label></li>
+            <li><input type="checkbox" data-check="basil-1-2"><label>Create your Google Doc proposal.<small>Explain your hub, which Roblox games you will study, how Discord will be used safely, and your weekly output.</small></label></li>
+            <li><input type="checkbox" data-check="basil-1-3"><label>Create a Google Sheet with 5 tabs: <code>Game Tracker</code>, <code>Research Notes</code>, <code>Mini Guides</code>, <code>Share Calendar</code>, <code>Side Project</code>.<small>This is where you organise your research and progress.</small></label></li>
+            <li><input type="checkbox" data-check="basil-1-4"><label>Create a Canva board called <code>Basil – Guide Style Board</code>.<small>Collect examples of game guide layouts, ranking cards, icons, colours, and clear headings.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="basil">
+          <div class="block-head"><span class="step-badge">2</span><h3>Choose your focus areas</h3><span class="time">Week 1</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="basil-2-1"><label>Choose 3–4 Roblox games to study first.<small>Options: BedWars, Sell Lemons, All Star Tower Defense, Guts & Blackpowder.</small></label></li>
+            <li><input type="checkbox" data-check="basil-2-2"><label>For each game, add one row in <code>Game Tracker</code>.<small>Columns: Game, Objective, Skill Needed, Difficulty, Best Strategy, Beginner Tip, Common Mistake, My Rating.</small></label></li>
+            <li><input type="checkbox" data-check="basil-2-3"><label>Pick one real-life side focus for the first two weeks.<small>Basketball drill, swimming skill, or one cooking recipe.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="basil">
+          <div class="block-head"><span class="step-badge">3</span><h3>Research and compare properly</h3><span class="time">Week 2</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="basil-3-1"><label>Research one game at a time.<small>Use game experience, videos, wikis, or trusted guides. Do not just copy; write what you understand.</small></label></li>
+            <li><input type="checkbox" data-check="basil-3-2"><label>Create one comparison table in Sheets.<small>Compare 3 games using: fun, difficulty, teamwork, strategy, replay value, beginner friendliness.</small></label></li>
+            <li><input type="checkbox" data-check="basil-3-3"><label>Write a short judgement for each game.<small>Use this format: “This game is best for ___ because ___.”</small></label></li>
+            <li><input type="checkbox" data-check="basil-3-4"><label>Save useful screenshots or links in your Drive folder.<small>Name files clearly so you can find them later.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="basil">
+          <div class="block-head"><span class="step-badge">4</span><h3>Create mini guides</h3><span class="time">Week 3–4</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="basil-4-1"><label>Choose one guide format.<small>Examples: Beginner Tips, Best Strategy, Common Mistakes, Ranking Card, How to Improve.</small></label></li>
+            <li><input type="checkbox" data-check="basil-4-2"><label>Create your first mini guide in Google Docs or Canva.<small>Use a title, 3–5 points, one useful visual, and one final recommendation.</small></label></li>
+            <li><input type="checkbox" data-check="basil-4-3"><label>Create a Canva cover or graphic for the guide.<small>Keep it clean: title, game name, one icon/image, and your rating.</small></label></li>
+            <li><input type="checkbox" data-check="basil-4-4"><label>Save the guide in Drive and paste the link in <code>Mini Guides</code> tab.<small>Update status: Draft → Reviewed → Shared → Improved.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="basil">
+          <div class="block-head"><span class="step-badge">5</span><h3>Share updates in Discord safely</h3><span class="time">Week 3–6</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="basil-5-1"><label>Use only a family-approved Discord server, private group, or safe sharing space.<small>No real name, school, exact location, family details, or private information.</small></label></li>
+            <li><input type="checkbox" data-check="basil-5-2"><label>Share one structured update per week.<small>Format: Title → Short summary → One useful tip → One question for feedback.</small></label></li>
+            <li><input type="checkbox" data-check="basil-5-3"><label>Record feedback in your tracker.<small>Write: who responded, what they said, and what you will improve.</small></label></li>
+            <li><input type="checkbox" data-check="basil-5-4"><label>Improve one guide or comparison after feedback.<small>Change one thing: clarity, layout, example, rating, or explanation.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="basil">
+          <div class="block-head"><span class="step-badge">6</span><h3>Add one real-life side project</h3><span class="time">Week 4–6</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="basil-6-1"><label>If you choose basketball, create a practice tracker.<small>Track: date, drill, minutes, shots taken, shots scored, what improved.</small></label></li>
+            <li><input type="checkbox" data-check="basil-6-2"><label>If you choose swimming, create a progress tracker.<small>Track: date, stroke/skill, laps, breathing, stamina, what to improve.</small></label></li>
+            <li><input type="checkbox" data-check="basil-6-3"><label>If you choose cooking, create a recipe project.<small>Track: recipe, ingredients, cost, steps, result, family rating, what to improve next time.</small></label></li>
+            <li><input type="checkbox" data-check="basil-6-4"><label>Create one Canva summary card for your side project.<small>Show what you tried, what happened, and what you learned.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="basil">
+          <div class="block-head"><span class="step-badge">7</span><h3>Build your final research hub portfolio</h3><span class="time">Week 6</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="basil-7-1"><label>Choose your best 3–4 mini guides or comparison sheets.<small>Put them in a folder called Final Hub Portfolio.</small></label></li>
+            <li><input type="checkbox" data-check="basil-7-2"><label>Create a simple index page in Google Docs.<small>List each guide, link, and one sentence explaining what it teaches.</small></label></li>
+            <li><input type="checkbox" data-check="basil-7-3"><label>Write a short reflection.<small>Answer: What did I understand better? How did I communicate better? What would I research next?</small></label></li>
+          </ul>
+        </div>
+
+        <table class="output-table">
+          <thead><tr><th>By the end of summer</th><th>What it proves</th></tr></thead>
+          <tbody>
+            <tr><td>3–4 Roblox comparison sheets</td><td>You can analyse and compare instead of only playing.</td></tr>
+            <tr><td>3–4 mini guides or update cards</td><td>You can turn knowledge into useful communication.</td></tr>
+            <tr><td>Safe Discord or private updates</td><td>You can share online in a structured and responsible way.</td></tr>
+            <tr><td>One sports, swimming, or cooking side project</td><td>You can apply organisation to real life, not only games.</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="tab-panel" id="mohammad" role="tabpanel">
+        <div class="profile-head">
+          <div><h2>Mohammad — Creative Mini Studio</h2><p>Your project should feel playful, creative, and enjoyable. You will make small creative pieces: Harry Potter-inspired pages, comics, cards, Roblox edits, CapCut videos, and YouTube Shorts. Your job is to keep creating, not to make everything perfect.</p></div>
+          <div class="badge"><span class="big">✨</span><strong>Project output</strong><span>Mini publication, creative cards, Roblox edits, YouTube Shorts, final collection.</span></div>
+        </div>
+        <div class="project-control">
+          <div class="mission"><h3>Project Mission</h3><p>Build a fun creative studio where you make small things every week, save them properly, share selected work safely, and collect your favourite pieces at the end.</p><div class="tool-chips"><span>Google Drive</span><span>Google Sheets</span><span>Google Docs</span><span>Canva</span><span>CapCut</span><span>YouTube Shorts</span><span>Creative portfolio</span></div></div>
+          <div class="progress-card"><strong>Mohammad progress</strong><div class="progress-track"><div class="progress-fill" data-progress="mohammad"></div></div><span data-count="mohammad">0 tasks completed</span></div>
+        </div>
+
+        <div class="task-block" data-owner="mohammad">
+          <div class="block-head"><span class="step-badge">1</span><h3>Set up your creative mini studio</h3><span class="time">Week 1 • 1 day</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="mohammad-1-1"><label>Create a Drive folder called <code>Mohammad – Creative Mini Studio</code>.<small>Inside it, create: Ideas, Canva Designs, Harry Potter Project, Roblox Clips, CapCut Edits, YouTube Shorts, Final Collection.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-1-2"><label>Create a very simple project proposal.<small>Answer only: what I want to make, why I like it, what tools I will use, and what I want to show at the end.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-1-3"><label>Create a simple checklist in Google Sheets or Docs.<small>Columns: Thing I’m Making, Started, Finished, Saved, Shared, Favourite Part.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-1-4"><label>Create a Canva mood board called <code>Mohammad – Creative Board</code>.<small>Add colours, magical images, book covers, Roblox styles, title ideas, and anything that gives you ideas.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="mohammad">
+          <div class="block-head"><span class="step-badge">2</span><h3>Choose your first creative track</h3><span class="time">Week 1</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="mohammad-2-1"><label>Choose one first track: Harry Potter-inspired comic, illustrated book, spell cards, house guide, football cards, or Roblox edits.<small>You can change later, but start with one so it is easier.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-2-2"><label>Create a title for your first mini project.<small>Example: “My Magical House Guide,” “Roblox Rivals Edits,” or “Miniwars Battle Cards.”</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-2-3"><label>Create one cover page in Canva.<small>It does not need to be perfect. It only needs a title, colours, and a clear idea.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="mohammad">
+          <div class="block-head"><span class="step-badge">3</span><h3>Make small creative pieces</h3><span class="time">Week 2–3</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="mohammad-3-1"><label>Create one Canva page, comic panel, card, or mini poster at a time.<small>Small pieces count. You do not need to finish a full book in one day.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-3-2"><label>Save every draft, even if it is not finished.<small>Name files clearly: <code>Spell Card 01</code>, <code>Comic Page 01</code>, <code>Rivals Short 01</code>.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-3-3"><label>Add short captions, funny lines, quotes, or character notes.<small>This builds writing without making it feel like school.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-3-4"><label>Choose one favourite piece each week and move it to <code>Final Collection</code>.<small>This helps you see your progress.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="mohammad">
+          <div class="block-head"><span class="step-badge">4</span><h3>Edit Roblox Shorts in CapCut</h3><span class="time">Week 2–5</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="mohammad-4-1"><label>Record Roblox clips from Rivals, Miniwars, or another approved game.<small>Choose short moments with clear action.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-4-2"><label>Edit a 10–30 second Short in CapCut.<small>Use clean cuts, text, music, and one simple effect. Do not add too many effects.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-4-3"><label>Save the final video in Drive before posting.<small>Put it in <code>CapCut Edits</code> or <code>YouTube Shorts</code>.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-4-4"><label>Post only selected Shorts with family approval.<small>No personal details, no face, no school, no private information.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="mohammad">
+          <div class="block-head"><span class="step-badge">5</span><h3>Improve one thing each week</h3><span class="time">Week 3–6</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="mohammad-5-1"><label>Pick one thing to improve: title, colour, layout, cut, caption, music, or effect.<small>Do not try to improve everything at once.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-5-2"><label>Save both versions: Version 1 and Version 2.<small>This shows how your work improved.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-5-3"><label>Show one small thing to family each week.<small>You can say: “This is what I made. This is what I liked. This is what I want to try next.”</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="mohammad">
+          <div class="block-head"><span class="step-badge">6</span><h3>Build your final creative collection</h3><span class="time">Week 6</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="mohammad-6-1"><label>Choose your best Canva pages, comics, cards, Roblox edits, and Shorts.<small>Move them into <code>Final Collection</code>.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-6-2"><label>Create a cover page called <code>Mohammad’s Creative Mini Studio</code>.<small>Add your name, project name, and favourite icons or images.</small></label></li>
+            <li><input type="checkbox" data-check="mohammad-6-3"><label>Say or write a short reflection.<small>Answer: What did I make? What did I enjoy? What do I want to make next?</small></label></li>
+          </ul>
+        </div>
+
+        <table class="output-table">
+          <thead><tr><th>By the end of summer</th><th>What it proves</th></tr></thead>
+          <tbody>
+            <tr><td>A mini publication, comic, illustrated book, or card collection</td><td>You can turn imagination into something people can see.</td></tr>
+            <tr><td>4–6 Roblox Shorts or CapCut edits</td><td>You can create, edit, and improve short-form video.</td></tr>
+            <tr><td>A final creative collection folder</td><td>You can organise and keep your own creative work.</td></tr>
+            <tr><td>Simple weekly sharing</td><td>You can express what you made without pressure.</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="tab-panel" id="raja" role="tabpanel">
+        <div class="profile-head">
+          <div><h2>Raja — Islamic AI Story Creator</h2><p>Your mission is to join the boys as a creator. You will build a respectful Islamic storytelling project using research, short scripts, AI-assisted visuals, AI video scenes, editing, and clear moral lessons. The aim is not to produce perfect films immediately. The aim is to model learning, discipline, creativity, and improvement alongside them.</p></div>
+          <div class="badge"><span class="big">🌙</span><strong>Project output</strong><span>Short Islamic story videos, scripts, prompt bank, thumbnails, captions, and a small portfolio.</span></div>
+        </div>
+        <div class="project-control">
+          <div class="mission"><h3>Project Mission</h3><p>Create a series of short, respectful Islamic stories using AI video tools. Each story should teach one clear value, avoid inaccurate claims, and be suitable for family viewing.</p><div class="tool-chips"><span>Google Drive</span><span>Google Sheets</span><span>Google Docs</span><span>Canva</span><span>AI video tools</span><span>Prompt bank</span><span>CapCut / editing</span></div></div>
+          <div class="progress-card"><strong>Raja progress</strong><div class="progress-track"><div class="progress-fill" data-progress="raja"></div></div><span data-count="raja">0 tasks completed</span></div>
+        </div>
+
+        <div class="task-block" data-owner="raja">
+          <div class="block-head"><span class="step-badge">1</span><h3>Set up your Islamic AI storytelling studio</h3><span class="time">Week 1 • 1–2 days</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="raja-1-1"><label>Create a Drive folder called <code>Raja – Islamic AI Stories</code>.<small>Inside it, create: Story Bank, Research Notes, Scripts, Prompt Bank, Image Assets, AI Video Drafts, Voice & Audio, Canva Thumbnails, Published / Shared, Reflections.</small></label></li>
+            <li><input type="checkbox" data-check="raja-1-2"><label>Create a Google Doc called <code>Raja – Project Proposal</code>.<small>Answer: what type of Islamic stories you will create, who they are for, what tone you want, what tools you will use, and how you will check accuracy.</small></label></li>
+            <li><input type="checkbox" data-check="raja-1-3"><label>Create a Google Sheet called <code>Raja – AI Story Tracker</code> with 5 tabs.<small>Tabs: Story Ideas, Research Log, Production Tracker, Prompt Bank, Publishing Calendar.</small></label></li>
+            <li><input type="checkbox" data-check="raja-1-4"><label>In <code>Production Tracker</code>, add columns: Story Title, Value / Lesson, Source Notes, Script Status, Visual Status, Edit Status, Review Status, Share Date, Link.<small>Status options: Idea → Researching → Scripted → Generating → Editing → Family Review → Shared → Improved.</small></label></li>
+            <li><input type="checkbox" data-check="raja-1-5"><label>Create a Canva board called <code>Raja – Islamic Story Visual Direction</code>.<small>Collect references for atmosphere, colours, architecture, desert scenes, calligraphy-inspired layouts, thumbnails, and title cards.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="raja">
+          <div class="block-head"><span class="step-badge">2</span><h3>Choose the story rules before creating</h3><span class="time">Week 1</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="raja-2-1"><label>Choose the type of stories you want to make first.<small>Start with values-based stories: honesty, patience, gratitude, kindness, responsibility, mercy, courage, respect for parents, or helping others.</small></label></li>
+            <li><input type="checkbox" data-check="raja-2-2"><label>Write your accuracy rules in the proposal.<small>Do not invent religious claims, do not present weak information as fact, and avoid quoting hadith or Quran unless you verify the wording and source.</small></label></li>
+            <li><input type="checkbox" data-check="raja-2-3"><label>Set a visual respect rule for AI generation.<small>Avoid depicting prophets, sacred figures, or sensitive religious scenes directly. Use symbolic scenes, landscapes, objects, silhouettes, architecture, light, and atmosphere instead.</small></label></li>
+            <li><input type="checkbox" data-check="raja-2-4"><label>Create your first list of 6 story ideas in <code>Story Ideas</code>.<small>For each idea, write the value, audience, story length, and whether it needs source checking.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="raja">
+          <div class="block-head"><span class="step-badge">3</span><h3>Write your first short story script</h3><span class="time">Week 2</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="raja-3-1"><label>Choose one story idea and write a 60–90 second script in Google Docs.<small>Use this structure: title, opening hook, simple scene, problem, action, lesson, closing reflection.</small></label></li>
+            <li><input type="checkbox" data-check="raja-3-2"><label>Keep the language simple enough for the boys to understand.<small>If Mohammad can understand the lesson, the story is probably clear enough.</small></label></li>
+            <li><input type="checkbox" data-check="raja-3-3"><label>Ask AI to help polish the script, but do not let it decide the religious message alone.<small>Use AI for wording, structure, and clarity. You are responsible for the meaning and accuracy.</small></label></li>
+            <li><input type="checkbox" data-check="raja-3-4"><label>Add a short ending line called <code>What this teaches us</code>.<small>One sentence only. Make the lesson practical, not preachy.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="raja">
+          <div class="block-head"><span class="step-badge">4</span><h3>Build the AI visual plan and prompt bank</h3><span class="time">Week 2–3</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="raja-4-1"><label>Break the script into 5–7 visual scenes.<small>Example: opening landscape, main character moment, challenge, decision, consequence, peaceful closing, title card.</small></label></li>
+            <li><input type="checkbox" data-check="raja-4-2"><label>Write one AI prompt for each scene in the <code>Prompt Bank</code> tab.<small>Include: setting, character style if needed, mood, camera movement, lighting, colour, and what should not appear.</small></label></li>
+            <li><input type="checkbox" data-check="raja-4-3"><label>Generate still images or short AI video clips using the chosen AI video tool.<small>Save every usable result in <code>Image Assets</code> or <code>AI Video Drafts</code> with clear file names.</small></label></li>
+            <li><input type="checkbox" data-check="raja-4-4"><label>Record what worked and what failed in your tracker.<small>This is how you improve prompts instead of repeating mistakes.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="raja">
+          <div class="block-head"><span class="step-badge">5</span><h3>Edit the first story video</h3><span class="time">Week 3–4</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="raja-5-1"><label>Assemble the video in CapCut, Canva, or another editing tool.<small>Use the AI scenes, simple transitions, readable subtitles, and a calm title card.</small></label></li>
+            <li><input type="checkbox" data-check="raja-5-2"><label>Add narration, text, or captions.<small>You may use your own voice, text-only storytelling, or approved AI voice. Keep it clear and respectful.</small></label></li>
+            <li><input type="checkbox" data-check="raja-5-3"><label>Create a thumbnail or cover in Canva.<small>Use a simple title, calm colours, and one visual idea. Avoid clutter.</small></label></li>
+            <li><input type="checkbox" data-check="raja-5-4"><label>Save the final draft in Drive and paste the link in the tracker.<small>Update status to <code>Family Review</code>.</small></label></li>
+          </ul>
+        </div>
+
+        <div class="task-block" data-owner="raja">
+          <div class="block-head"><span class="step-badge">6</span><h3>Review, share, and improve the series</h3><span class="time">Week 4–6</span></div>
+          <ul class="tasks">
+            <li><input type="checkbox" data-check="raja-6-1"><label>Show the first draft to the family before sharing anywhere else.<small>Ask: Is the lesson clear? Is the tone respectful? Is anything confusing or inaccurate?</small></label></li>
+            <li><input type="checkbox" data-check="raja-6-2"><label>Make one improved version after feedback.<small>Save it as <code>Story 01 – Version 2</code> so the boys can see that adults revise too.</small></label></li>
+            <li><input type="checkbox" data-check="raja-6-3"><label>Create at least 3 short Islamic AI story videos by the end of summer.<small>Each one should have a script, prompt bank, video draft, final version, thumbnail, and reflection.</small></label></li>
+            <li><input type="checkbox" data-check="raja-6-4"><label>Share one lesson learned with the boys during the family check-in.<small>Model what it looks like to learn a new tool, struggle, improve, and keep going.</small></label></li>
+          </ul>
+        </div>
+
+        <table class="output-table">
+          <thead><tr><th>By the end of summer</th><th>What it proves</th></tr></thead>
+          <tbody>
+            <tr><td>3 short Islamic AI story videos</td><td>You can turn values and knowledge into meaningful digital storytelling.</td></tr>
+            <tr><td>A script bank and prompt bank</td><td>You can structure creative work before generating it.</td></tr>
+            <tr><td>A Canva visual direction board and thumbnails</td><td>You can create a consistent visual identity for a series.</td></tr>
+            <tr><td>A family-reviewed publishing workflow</td><td>You can model accuracy, responsibility, and creative discipline.</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+
+    <section class="section-card" id="rewards">
+      <div class="section-heading">
+        <div class="num">7</div>
+        <div>
+          <h2>Rewards &amp; Recognition</h2>
+          <p>The real reward is becoming someone who can start something, manage it, finish it, and explain it. Recognition comes from visible progress — plus one bonus milestone worth chasing.</p>
+        </div>
+      </div>
+
+      <div class="template-box reward" id="reward-box" style="margin-top:0;">
+        <div class="reward-hero">
+          <div>
+            <span class="tag orange">The bonus milestone</span>
+            <h3 style="font-size:1.5rem; color:#0b2d57; margin:8px 0 6px;">Hit 3,000 views on any published piece, unlock a reward.</h3>
+            <p style="color:var(--muted); margin:0;">Any project. Any video, reel, guide, or short. Real views, real reward — agree the reward together with Mum &amp; Baba so the target feels worth chasing.</p>
+            <div class="view-logger">
+              <label for="view-count">Log a piece's views</label>
+              <input type="number" id="view-count" min="0" inputmode="numeric" placeholder="e.g. 1200">
+              <button type="button" id="view-check">Check</button>
+            </div>
+            <div class="reward-meter"><div class="fill" id="reward-fill"></div></div>
+            <div class="reward-meter-labels"><span>0</span><span>1,500</span><span>3,000 → 🎉</span></div>
+          </div>
+          <div>
+            <div class="big-num">3,000</div>
+            <div class="big-sub">views = reward unlocked</div>
+            <div class="reward-note"><span class="pin">Set by Mum &amp; Baba</span><p>Choose a reward that points back at the craft — a tool upgrade, an outing, or kit beats cash.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin:26px 0 6px; color:#0b2d57;">Badges to earn along the way</h3>
+      <p class="small-note" style="margin-top:0;">Recognition beats prizes. Tick these off out loud as each project owner hits the milestone.</p>
+      <div class="grid-3">
+        <div class="info-card"><span class="tag cyan">🧭 The Planner</span><p>Wrote the proposal and built the tracker.</p></div>
+        <div class="info-card"><span class="tag green">🔎 The Researcher</span><p>Found and summarised genuinely useful information.</p></div>
+        <div class="info-card"><span class="tag orange">🛠️ The Builder</span><p>Created and saved the first real draft.</p></div>
+        <div class="info-card"><span class="tag purple">📣 The Communicator</span><p>Gave clear weekly updates and asked for help well.</p></div>
+        <div class="info-card"><span class="tag cyan">🏁 The Finisher</span><p>Completed a final output worth showing.</p></div>
+        <div class="info-card"><span class="tag green">🎤 The Presenter</span><p>Showed the project to the family with confidence.</p></div>
+      </div>
+    </section>
+
+    <section class="section-card" id="house-rules">
+      <div class="section-heading">
+        <div class="num">8</div>
+        <div>
+          <h2>House Rules</h2>
+          <p>Four rules that keep the project healthy and fun. The first one is the big one.</p>
+        </div>
+      </div>
+      <div class="house-rules">
+        <div class="house-rule flag"><span class="rn">Rule 01 — the big one</span><h3>Your only competition is last-week you.</h3><p>Four different projects, four different lanes. We will never compare your numbers to your brothers' — or to Baba's. Each of you is measured only against your own first week and your own craft.</p></div>
+        <div class="house-rule"><span class="rn">Rule 02</span><h3>Shipped beats perfect</h3><p>A finished piece you shared beats a perfect idea stuck in your head.</p></div>
+        <div class="house-rule"><span class="rn">Rule 03</span><h3>Your project, your call</h3><p>You own it. Mum &amp; Baba are sponsors, not editors. They ask; you make.</p></div>
+        <div class="house-rule"><span class="rn">Rule 04</span><h3>Stuck is the job</h3><p>Getting stuck isn't failing — it's the work. Mark it <code>Stuck</code>, ask for help, and keep going. Never quit silently.</p></div>
+      </div>
+    </section>
+
+    <section class="section-card" id="parent-review">
+      <div class="section-heading">
+        <div class="num">9</div>
+        <div>
+          <h2>Parent Review System</h2>
+          <p>For Mum &amp; Baba. Keep the check-ins short, consistent, and calm. The aim is ownership, not micromanagement.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="info-card"><span class="tag cyan">Weekly Check-In</span><h3>Ask four questions</h3>
+          <ul class="check-list">
+            <li>What did you complete this week?</li>
+            <li>Where is it saved?</li>
+            <li>What did you learn?</li>
+            <li>What is the next task?</li>
+          </ul>
+        </div>
+        <div class="info-card"><span class="tag green">Progress Evidence</span><h3>Look for proof</h3>
+          <ul class="check-list">
+            <li>Updated tracker or checklist.</li>
+            <li>Saved files in the correct folder.</li>
+            <li>Drafts, edits, posts, guides, or screenshots.</li>
+            <li>One improvement from last week.</li>
+          </ul>
+        </div>
+        <div class="info-card"><span class="tag orange">Boundaries</span><h3>Protect safety and balance</h3>
+          <ul class="check-list">
+            <li>Review public account settings.</li>
+            <li>Approve public-facing posts when needed.</li>
+            <li>No pressure to show face or voice.</li>
+            <li>Keep sessions short and sustainable.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="core-principle">
+        <h3>Core principle</h3>
+        <p>The success measure is not viral content, perfect design, or a polished presentation. Success means each boy practised planning, creating, publishing or sharing, improving, and taking more ownership than before.</p>
+      </div>
+    </section>
+
+    <section class="section-card" id="safety">
+      <div class="section-heading">
+        <div class="num">10</div>
+        <div>
+          <h2>Publishing and Safety Rules</h2>
+          <p>Publishing is part of the project, but it must be done safely and with family approval.</p>
+        </div>
+      </div>
+      <div class="rules-box">
+        <h3>Before anything goes public, check these rules</h3>
+        <ul>
+          <li>Do not show your full name, school, home, location, private family details, or personal information.</li>
+          <li>Do not film strangers’ faces or private license plates. If they appear, blur or remove them.</li>
+          <li>Ask permission before filming in a showroom or any private place.</li>
+          <li>Use family-approved accounts, usernames, captions, and sharing spaces.</li>
+          <li>Do not reply to strange messages, arguments, or requests. Show Mum & Baba.</li>
+          <li>For Islamic AI stories, do not invent religious facts, do not depict prophets or sacred figures directly, and review sensitive content before sharing.</li>
+          <li>For AI tools, treat generated content as a draft. You still need to check accuracy, tone, and safety.</li>
+          <li>Publishing is not about becoming viral. It is about learning consistency, communication, and improvement.</li>
+        </ul>
+      </div>
+      <div class="action-row">
+        <button class="btn print" onclick="window.print()">Print / Save as PDF</button>
+        <button class="btn reset" onclick="resetChecks()">Reset all checkboxes</button>
+      </div>
+    </section>
+
+    <footer>Summer Independence Project Lab — your practical guide for planning, creating, sharing safely, improving, and becoming more independent together.</footer>
   </div>
 
-  <div class="sub-head" style="margin-top:0"><span class="eyebrow">House rules</span><h2>Four rules for the project.</h2></div>
-  <div class="rules">
-    <div class="rule big-rule"><span class="n">Rule 01 — the big one</span><h3>Your only competition is last-week you.</h3><p>Three different channels, three different lanes. We will <strong>never</strong> compare your numbers to your brothers'. Each of you is measured against your own first week and your own craft.</p></div>
-    <div class="rule"><span class="n">Rule 02</span><h3>Ship beats perfect</h3><p>A posted video beats a perfect idea stuck in your head.</p></div>
-    <div class="rule"><span class="n">Rule 03</span><h3>Your channel, your call</h3><p>You own it. We're stakeholders, not editors. We ask; you make.</p></div>
-    <div class="rule"><span class="n">Rule 04</span><h3>Stuck is the job</h3><p>Getting stuck isn't failing — it's the work. Ask, don't quit.</p></div>
-  </div>
-</section>
-
-<!-- FOR PARENTS -->
-<section class="panel" id="panel-parents" role="tabpanel" aria-labelledby="tab-parents">
-  <div class="sub-head" style="margin-top:0"><span class="eyebrow">For Mum &amp; Baba — keep this tab for yourselves</span><h2>How to run it without running it.</h2></div>
-  <p style="margin-bottom:8px">A few quiet reminders so the project does its developmental work — not just its surface work.</p>
-  <div class="pnote"><span class="k">Stay stakeholders</span><span class="v">Ask questions, don't take over. <span>The instant you reorganise a boy's sheet or edit his video for him, it stops being his — and the ownership is the whole point. Messy-but-his wins.</span></span></div>
-  <div class="pnote"><span class="k">Guard Rule 01</span><span class="v">Protect the no-comparison rule hardest of all. <span>Mohammad's numbers will dwarf his brothers' early. Never praise one boy by contrast to another — measure each only against his own week one.</span></span></div>
-  <div class="pnote"><span class="k">Set the date</span><span class="v">Lock Premiere Night out loud, early. <span>It's the deadline the whole thing hangs on. A real date turns this from an idea into a project.</span></span></div>
-  <div class="pnote"><span class="k">Let them get stuck</span><span class="v">Friction is the curriculum. <span>When a boy is blocked, ask "what's the blocker?" — don't solve it for him. The struggle is where the growth lives.</span></span></div>
-  <div class="pnote"><span class="k">The reward</span><span class="v">Choose something that points back at the craft. <span>A tool upgrade, an outing, or kit beats cash — cash quietly turns this into a numbers race, which fights Rule 01.</span></span></div>
-
-  <div class="ayah-box">
-    <p class="arabic">إِنَّ اللَّهَ يُحِبُّ إِذَا عَمِلَ أَحَدُكُمْ عَمَلًا أَنْ يُتْقِنَهُ</p>
-    <p class="ayah">"Allah loves that when one of you does a work, he does it with excellence."</p>
-    <p>Real work, done well, is <em>itqan</em> — not separate from deen. Each boy's channel is an <em>amanah</em> he chose to carry this summer.</p>
-  </div>
-</section>
-
-</main>
-
-<script>
-  /* ---------- tab switching ---------- */
-  const tabs = Array.from(document.querySelectorAll('.tab'));
-  const panels = Array.from(document.querySelectorAll('.panel'));
-  function selectTab(tab){
-    tabs.forEach(t=>t.setAttribute('aria-selected', String(t===tab)));
-    panels.forEach(p=>p.classList.toggle('active', p.id === tab.getAttribute('aria-controls')));
-    window.scrollTo({top:0});
-  }
-  tabs.forEach((tab,i)=>{
-    tab.addEventListener('click', ()=>selectTab(tab));
-    tab.addEventListener('keydown', e=>{
-      if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
-        e.preventDefault();
-        const dir = e.key==='ArrowRight'?1:-1;
-        const next = tabs[(i+dir+tabs.length)%tabs.length];
-        next.focus(); selectTab(next);
-      }
+  <script>
+    const buttons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.tab;
+        buttons.forEach(btn => { btn.classList.remove('active'); btn.setAttribute('aria-selected','false'); });
+        panels.forEach(panel => panel.classList.remove('active'));
+        button.classList.add('active');
+        button.setAttribute('aria-selected','true');
+        document.getElementById(target).classList.add('active');
+        location.hash = target;
+      });
     });
-  });
 
-  /* ---------- tiny localStorage helpers (no-op if storage is blocked) ---------- */
-  const NS = 'summerStudio:';
-  const store = {
-    get(k, fb){ try{ const v = localStorage.getItem(NS+k); return v===null ? fb : JSON.parse(v); }catch(e){ return fb; } },
-    set(k, v){ try{ localStorage.setItem(NS+k, JSON.stringify(v)); }catch(e){} },
-    del(k){ try{ localStorage.removeItem(NS+k); }catch(e){} }
-  };
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const boxes = document.querySelectorAll('input[type="checkbox"][data-check]');
+    boxes.forEach(box => {
+      const key = 'summer-lab-' + box.dataset.check;
+      box.checked = localStorage.getItem(key) === '1';
+      box.addEventListener('change', () => {
+        localStorage.setItem(key, box.checked ? '1' : '0');
+        updateProgress();
+      });
+    });
 
-  /* ---------- live progress per son, persisted to localStorage ---------- */
-  function wireProgress(panel){
-    const sonKey = panel.id.replace('panel-','');                 // ammar | basil | moh
-    const boxes = Array.from(panel.querySelectorAll('.step input[type=checkbox]'));
-    const bar = panel.querySelector('.prog-bar');
-    const count = panel.querySelector('[data-count]');
-    if(!boxes.length || !bar) return;
-
-    // stable id per checkbox from its position, e.g. ammar-s7
-    boxes.forEach((b,idx)=>{ b.id = sonKey + '-s' + (idx+1); });
-
-    function update(){
-      const done = boxes.filter(b=>b.checked).length;
-      bar.style.width = (done/boxes.length*100) + '%';
-      if(count) count.textContent = done + ' of ' + boxes.length + ' done';
+    function updateProgress(){
+      ['ammar','basil','mohammad','raja'].forEach(owner => {
+        const ownerBoxes = document.querySelectorAll(`.task-block[data-owner="${owner}"] input[type="checkbox"]`);
+        const checked = Array.from(ownerBoxes).filter(b => b.checked).length;
+        const total = ownerBoxes.length;
+        const pct = total ? Math.round((checked / total) * 100) : 0;
+        const fill = document.querySelector(`[data-progress="${owner}"]`);
+        const count = document.querySelector(`[data-count="${owner}"]`);
+        if(fill) fill.style.width = pct + '%';
+        if(count) count.textContent = `${checked} of ${total} tasks completed (${pct}%)`;
+      });
     }
-    function save(){
-      const state = {};
-      boxes.forEach(b=>{ if(b.checked) state[b.id] = true; });
-      store.set('progress:'+sonKey, state);
+    function resetChecks(){
+      if(!confirm('Reset all checkbox progress on this page?')) return;
+      boxes.forEach(box => {
+        box.checked = false;
+        localStorage.removeItem('summer-lab-' + box.dataset.check);
+      });
+      updateProgress();
     }
+    updateProgress();
 
-    // restore saved state, then reflect it in the bar
-    const saved = store.get('progress:'+sonKey, {});
-    boxes.forEach(b=>{ if(saved[b.id]) b.checked = true; });
-    boxes.forEach(b=>b.addEventListener('change', ()=>{ save(); update(); }));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // per-son reset control
-    const progTop = panel.querySelector('.prog-top');
-    if(progTop){
+    /* per-project reset buttons */
+    document.querySelectorAll('.progress-fill[data-progress]').forEach(fill => {
+      const owner = fill.dataset.progress;
+      const card = fill.closest('.progress-card');
+      if(!card) return;
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'reset-btn';
-      btn.textContent = 'Reset';
-      btn.addEventListener('click', ()=>{
-        if(!confirm('Reset progress for this channel? This clears every checked step here.')) return;
-        boxes.forEach(b=>{ b.checked = false; });
-        store.del('progress:'+sonKey);
-        update();
+      btn.className = 'reset-mini';
+      btn.textContent = 'Reset this project';
+      btn.addEventListener('click', () => {
+        if(!confirm('Reset progress for this project? This clears every checked step here.')) return;
+        document.querySelectorAll(`.task-block[data-owner="${owner}"] input[type="checkbox"]`).forEach(b => {
+          b.checked = false;
+          localStorage.removeItem('summer-lab-' + b.dataset.check);
+        });
+        updateProgress();
       });
-      progTop.appendChild(btn);
-    }
-    update();
-  }
-  ['panel-ammar','panel-basil','panel-moh'].forEach(id=>{
-    const p = document.getElementById(id); if(p) wireProgress(p);
-  });
-
-  /* ---------- Basil's "weeks shipped" streak ---------- */
-  (function(){
-    const wrap = document.getElementById('basil-streak');
-    if(!wrap) return;
-    const valEl = wrap.querySelector('[data-streak-val]');
-    let val = store.get('streak:basil', 0);
-    function render(){ valEl.textContent = val; }
-    wrap.querySelectorAll('[data-streak]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        val = Math.max(0, val + parseInt(btn.dataset.streak, 10));
-        store.set('streak:basil', val);
-        render();
-      });
+      card.appendChild(btn);
     });
-    render();
-  })();
 
-  /* ---------- reward meter + view logger + one-time celebration ---------- */
-  (function(){
-    const fill = document.querySelector('.meter .fill');
-    const input = document.getElementById('view-count');
-    const checkBtn = document.getElementById('view-check');
-    const reward = document.querySelector('.reward');
-    const GOAL = 3000;
-
-    function setMeter(v){
-      if(!fill) return;
-      fill.style.width = Math.max(0, Math.min(100, v/GOAL*100)) + '%';
-    }
-
-    let logged = store.get('reward:views', 0);
-    let celebrated = store.get('reward:celebrated', false);
-    if(input && logged) input.value = logged;
-
-    // animate the bar to the saved value when it scrolls into view
-    if(fill){
-      const mo = new IntersectionObserver(es=>es.forEach(e=>{
-        if(e.isIntersecting){ setMeter(logged); mo.unobserve(e.target); }
-      }),{threshold:.4});
-      mo.observe(fill);
-    }
-
-    function celebrate(){
-      if(reward){
-        reward.classList.add('unlocked');
-        setTimeout(()=>reward.classList.remove('unlocked'), 2300);
+    /* reward meter + view logger + one-time celebration */
+    (function(){
+      const fill = document.getElementById('reward-fill');
+      const input = document.getElementById('view-count');
+      const checkBtn = document.getElementById('view-check');
+      const box = document.getElementById('reward-box');
+      const GOAL = 3000;
+      function setMeter(v){ if(fill) fill.style.width = Math.max(0, Math.min(100, v / GOAL * 100)) + '%'; }
+      let logged = parseInt(localStorage.getItem('summer-lab-reward-views') || '0', 10) || 0;
+      let celebrated = localStorage.getItem('summer-lab-reward-celebrated') === '1';
+      if(input && logged) input.value = logged;
+      setMeter(logged);
+      function celebrate(){
+        if(box){ box.classList.add('unlocked'); setTimeout(() => box.classList.remove('unlocked'), 2300); }
+        if(!reduceMotion) confetti();
       }
-      if(!reduceMotion) confetti();
-    }
-
-    function check(){
-      const v = Math.max(0, parseInt(input.value, 10) || 0);
-      logged = v;
-      store.set('reward:views', v);
-      setMeter(v);
-      if(v >= GOAL && !celebrated){
-        celebrated = true;
-        store.set('reward:celebrated', true);
-        celebrate();
+      function check(){
+        const v = Math.max(0, parseInt(input.value, 10) || 0);
+        logged = v;
+        localStorage.setItem('summer-lab-reward-views', v);
+        setMeter(v);
+        if(v >= GOAL && !celebrated){
+          celebrated = true;
+          localStorage.setItem('summer-lab-reward-celebrated', '1');
+          celebrate();
+        }
       }
-    }
-    if(checkBtn) checkBtn.addEventListener('click', check);
-    if(input) input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); } });
-  })();
+      if(checkBtn) checkBtn.addEventListener('click', check);
+      if(input) input.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); check(); } });
+    })();
 
-  /* ---------- confetti: one tasteful burst ---------- */
-  function confetti(){
-    const colors = ['#34C4D6','#FF6A3D','#9B6BFF','#F4EFE9'];
-    const layer = document.createElement('div');
-    layer.id = 'confetti';
-    document.body.appendChild(layer);
-    for(let i=0;i<80;i++){
-      const p = document.createElement('div');
-      p.className = 'confetti-pc';
-      p.style.left = (Math.random()*100) + 'vw';
-      p.style.top = '-20px';
-      p.style.background = colors[i%colors.length];
-      p.style.transform = 'rotate(' + (Math.random()*360) + 'deg)';
-      const dur = 2.2 + Math.random()*1.8, delay = Math.random()*0.5;
-      p.style.animation = 'confettiFall ' + dur + 's ' + delay + 's cubic-bezier(.2,.6,.3,1) forwards';
-      layer.appendChild(p);
+    function confetti(){
+      const colors = ['#33c6d8','#f39a31','#8d65d8','#39b86f','#f05c62'];
+      const layer = document.createElement('div');
+      layer.id = 'confetti';
+      document.body.appendChild(layer);
+      for(let i=0; i<90; i++){
+        const p = document.createElement('div');
+        p.className = 'confetti-pc';
+        p.style.left = (Math.random()*100) + 'vw';
+        p.style.top = '-20px';
+        p.style.background = colors[i % colors.length];
+        p.style.transform = 'rotate(' + (Math.random()*360) + 'deg)';
+        const dur = 2.2 + Math.random()*1.8, delay = Math.random()*0.5;
+        p.style.animation = 'confettiFall ' + dur + 's ' + delay + 's cubic-bezier(.2,.6,.3,1) forwards';
+        layer.appendChild(p);
+      }
+      setTimeout(() => layer.remove(), 5200);
     }
-    setTimeout(()=>layer.remove(), 5200);
-  }
-</script>
+
+    if(location.hash){
+      const id = location.hash.replace('#','');
+      const tab = document.querySelector(`.tab-btn[data-tab="${id}"]`);
+      if(tab) tab.click();
+    }
+  </script>
 </body>
 </html>
