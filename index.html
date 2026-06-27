@@ -6,7 +6,7 @@
   <title>Summer Independence Project Lab | Ammar, Basil, Mohammad & Raja</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f6f9ff;
@@ -33,7 +33,7 @@
       --radius-sm: 12px;
       --shadow: 0 18px 55px rgba(16, 42, 76, .09);
       --max: 1220px;
-      --display: 'Bricolage Grotesque', Inter, ui-sans-serif, system-ui, sans-serif;
+      --display: 'Lato', ui-sans-serif, system-ui, sans-serif;
       --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     }
 
@@ -41,7 +41,7 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: 'Lato', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
         radial-gradient(circle at 12% 0%, rgba(51,198,216,.20), transparent 30rem),
         radial-gradient(circle at 92% 7%, rgba(243,154,49,.18), transparent 30rem),
@@ -69,8 +69,9 @@
     }
     .hero-inner { position:relative; display:grid; grid-template-columns: 1.18fr .82fr; gap: 34px; align-items:center; }
     .eyebrow { display:inline-flex; gap:8px; align-items:center; color:#072033; background:var(--cyan); border-radius:999px; padding:9px 14px; font-weight:900; letter-spacing:.05em; text-transform:uppercase; font-size:.82rem; }
-    h1,h2,h3,h4 { margin:0; line-height:1.12; font-family:var(--display); font-weight:800; letter-spacing:-.01em; }
-    h1 { margin-top:18px; font-size:clamp(2.5rem, 6vw, 5rem); letter-spacing:-.06em; color:#09264d; }
+    h1,h2,h3,h4 { margin:0; line-height:1.14; font-family:var(--display); font-weight:700; letter-spacing:-.01em; }
+    h1 { margin-top:18px; font-size:clamp(2.5rem, 6vw, 5rem); font-weight:900; letter-spacing:-.04em; color:#09264d; }
+    .grad { background:linear-gradient(100deg, var(--cyan), var(--purple) 52%, var(--orange)); -webkit-background-clip:text; background-clip:text; color:transparent; }
     .lead { color:#52657e; font-size:clamp(1.05rem, 2vw, 1.28rem); max-width:850px; margin:22px 0 0; }
     .hero-meta { display:flex; gap:10px; flex-wrap:wrap; margin-top:26px; }
     .pill { border:1px solid var(--line); background:#ffffff; border-radius:999px; padding:10px 14px; color:#24415f; font-weight:800; font-size:.9rem; box-shadow:0 8px 22px rgba(16,42,76,.05); }
@@ -139,8 +140,7 @@
     .tab-btn { border:0; border-right:1px solid var(--line); background:transparent; color:#314a67; padding:18px; cursor:pointer; font-size:1rem; font-weight:900; text-align:left; }
     .tab-btn:last-child { border-right:0; }
     .tab-btn.active { background:var(--cyan); color:#062434; }
-    .tab-panel { display:none; padding: clamp(22px, 3.5vw, 38px); background:#ffffff; }
-    .tab-panel.active { display:block; }
+    .tab-panel { display:block; padding: clamp(22px, 3.5vw, 38px); background:#ffffff; border:1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow); }
 
     .profile-head { display:grid; grid-template-columns: 1fr auto; gap:20px; align-items:start; margin-bottom:22px; }
     .profile-head h2 { font-size: clamp(1.75rem, 3vw, 2.7rem); letter-spacing:-.045em; color:#082853; }
@@ -200,6 +200,30 @@
 
     footer { margin-top:26px; text-align:center; color:var(--muted); font-size:.92rem; }
 
+    /* ===== slim brand bar ===== */
+    .brandbar { display:flex; align-items:center; gap:12px; padding:4px 6px 0; }
+    .bb-mark { font-family:var(--display); font-weight:900; font-size:1.06rem; color:#0b2d57; letter-spacing:-.01em; }
+    .bb-mark b { font-weight:900; background:linear-gradient(100deg, var(--cyan), var(--purple) 52%, var(--orange)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .bb-when { margin-left:auto; font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+
+    /* ===== main tab navigation ===== */
+    .maintabs { position:sticky; top:0; z-index:40; display:flex; gap:8px; flex-wrap:nowrap; overflow-x:auto; padding:12px; margin-top:14px; background:rgba(255,255,255,.86); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); scrollbar-width:none; }
+    .maintabs::-webkit-scrollbar { display:none; }
+    .maintab { flex:0 0 auto; border:1px solid var(--line); background:#fff; color:#314a67; border-radius:999px; padding:10px 16px; font-family:var(--display); font-weight:800; font-size:.92rem; cursor:pointer; white-space:nowrap; transition:border-color .15s, color .15s, background .15s; }
+    .maintab:hover { border-color:var(--line-strong); color:var(--text); }
+    .maintab.active { color:#fff; box-shadow:0 8px 20px rgba(16,42,76,.14); }
+    .maintab[data-accent="neutral"].active { background:#0b2d57; border-color:#0b2d57; }
+    .maintab[data-accent="ammar"].active   { background:var(--cyan);   border-color:var(--cyan);   color:#053640; }
+    .maintab[data-accent="basil"].active   { background:var(--orange); border-color:var(--orange); color:#3a2208; }
+    .maintab[data-accent="moh"].active     { background:var(--purple); border-color:var(--purple); color:#fff; }
+    .maintab[data-accent="raja"].active    { background:var(--green);  border-color:var(--green);  color:#053620; }
+
+    /* ===== main panels ===== */
+    .mainpanel { display:none; }
+    .mainpanel.active { display:block; animation:fade .35s ease; }
+    .mainpanel > section:first-child, .mainpanel > .hero:first-child, .mainpanel > .tab-panel:first-child { margin-top:18px; }
+    @keyframes fade { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
     @media (max-width: 1100px) {
       .hero-inner, .grid-2, .profile-head, .project-control { grid-template-columns:1fr; }
       .grid-3, .grid-4, .family-check, .rhythm-cycle { grid-template-columns:repeat(2, 1fr); }
@@ -219,7 +243,7 @@
     }
     /* ===== rewards & celebration ===== */
     .reward-hero { display:grid; grid-template-columns:1.1fr .9fr; gap:24px; align-items:center; }
-    .big-num { font-family:var(--display); font-weight:800; font-size:clamp(3.4rem,9vw,6rem); line-height:.9; letter-spacing:-.04em; background:linear-gradient(100deg,var(--orange),var(--red)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .big-num { font-family:var(--display); font-weight:900; font-size:clamp(3.4rem,9vw,6rem); line-height:.9; letter-spacing:-.04em; background:linear-gradient(100deg,var(--orange),var(--red)); -webkit-background-clip:text; background-clip:text; color:transparent; }
     .big-sub { color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:.82rem; }
     .reward-meter { height:14px; border-radius:999px; background:#eef2f8; border:1px solid var(--line); overflow:hidden; margin:18px 0 10px; }
     .reward-meter .fill { height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,var(--orange),var(--red)); transition:width 1s cubic-bezier(.2,.7,.2,1); }
@@ -262,6 +286,7 @@
       .reward.unlocked { animation:none; }
       .confetti-pc { display:none; }
       .reward-meter .fill, .progress-fill { transition:none; }
+      .mainpanel.active { animation:none; }
       html { scroll-behavior:auto; }
     }
 
@@ -275,6 +300,8 @@
     }
 
     @media print {
+      .maintabs, .brandbar { display:none !important; }
+      .mainpanel { display:block !important; }
       body { background:white; color:#111; }
       .page { width:100%; padding:0; }
       .hero,.section-card,.tabs-card,.info-card,.skill-card,.tool-card,.task-block,.template-box,.rules-box,.check-card,.week-card,.rhythm-mini-card { background:white !important; color:#111; box-shadow:none; border-color:#ddd; }
@@ -288,11 +315,27 @@
 </head>
 <body>
   <div class="page">
+    <div class="brandbar">
+      <span class="bb-mark">Summer Independence <b>Project Lab</b></span>
+      <span class="bb-when">Jul–Aug 2026 · 6-week lab</span>
+    </div>
+
+    <nav class="maintabs" role="tablist" aria-label="Sections">
+      <button class="maintab active" data-main="start" data-accent="neutral" role="tab" aria-selected="true">Start here</button>
+      <button class="maintab" data-main="ammar" data-accent="ammar" role="tab" aria-selected="false">🚗 Ammar · 15</button>
+      <button class="maintab" data-main="basil" data-accent="basil" role="tab" aria-selected="false">🎮 Basil · 14</button>
+      <button class="maintab" data-main="mohammad" data-accent="moh" role="tab" aria-selected="false">✨ Mohammad · 10</button>
+      <button class="maintab" data-main="raja" data-accent="raja" role="tab" aria-selected="false">🌙 Raja</button>
+      <button class="maintab" data-main="rewards" data-accent="neutral" role="tab" aria-selected="false">Rewards &amp; rules</button>
+      <button class="maintab" data-main="parents" data-accent="neutral" role="tab" aria-selected="false">For parents</button>
+    </nav>
+
+    <div class="mainpanel active" id="mp-start">
     <header class="hero">
       <div class="hero-inner">
         <div>
           <div class="eyebrow">Your Summer Mission</div>
-          <h1>Summer Independence Project Lab</h1>
+          <h1>Summer <span class="grad">Independence</span> Project Lab</h1>
           <p class="lead">This is your reference point for the summer. Each of you will build one real project connected to what you already enjoy. You will plan it, organise it, create real work, publish or share safely, improve it, and collect evidence of what you made.</p>
           <div class="hero-meta">
             <span class="pill">6-week project system</span>
@@ -469,14 +512,9 @@
       </div>
     </section>
 
-    <section class="tabs-card" id="projects">
-      <div class="tabs-header" role="tablist" aria-label="Project tabs">
-        <button class="tab-btn active" data-tab="ammar" role="tab" aria-selected="true">🚗 Ammar | 15</button>
-        <button class="tab-btn" data-tab="basil" role="tab" aria-selected="false">🎮 Basil | 14</button>
-        <button class="tab-btn" data-tab="mohammad" role="tab" aria-selected="false">✨ Mohammad | 10</button>
-        <button class="tab-btn" data-tab="raja" role="tab" aria-selected="false">🌙 Raja | AI Stories</button>
-      </div>
+    </div><!-- /mp-start -->
 
+    <div class="mainpanel" id="mp-ammar">
       <article class="tab-panel active" id="ammar" role="tabpanel">
         <div class="profile-head">
           <div><h2>Ammar — Car Content Creator</h2><p>You do not need to show your face or use your voice. Your project is to build a serious car content studio: learn the style, film real cars safely, edit short videos, write captions, publish selected posts, and build confidence through small private family vlogs.</p></div>
@@ -585,7 +623,9 @@
           </tbody>
         </table>
       </article>
+    </div>
 
+    <div class="mainpanel" id="mp-basil">
       <article class="tab-panel" id="basil" role="tabpanel">
         <div class="profile-head">
           <div><h2>Basil — Roblox + Research Hub</h2><p>Your project turns gaming, sport, swimming, and cooking interests into organised research, mini guides, comparisons, and structured updates. Discord can be used, but only in safe, approved spaces and with clear communication.</p></div>
@@ -674,7 +714,9 @@
           </tbody>
         </table>
       </article>
+    </div>
 
+    <div class="mainpanel" id="mp-mohammad">
       <article class="tab-panel" id="mohammad" role="tabpanel">
         <div class="profile-head">
           <div><h2>Mohammad — Creative Mini Studio</h2><p>Your project should feel playful, creative, and enjoyable. You will make small creative pieces: Harry Potter-inspired pages, comics, cards, Roblox edits, CapCut videos, and YouTube Shorts. Your job is to keep creating, not to make everything perfect.</p></div>
@@ -752,7 +794,9 @@
           </tbody>
         </table>
       </article>
+    </div>
 
+    <div class="mainpanel" id="mp-raja">
       <article class="tab-panel" id="raja" role="tabpanel">
         <div class="profile-head">
           <div><h2>Raja — Islamic AI Story Creator</h2><p>Your mission is to join the boys as a creator. You will build a respectful Islamic storytelling project using research, short scripts, AI-assisted visuals, AI video scenes, editing, and clear moral lessons. The aim is not to produce perfect films immediately. The aim is to model learning, discipline, creativity, and improvement alongside them.</p></div>
@@ -834,8 +878,9 @@
           </tbody>
         </table>
       </article>
-    </section>
+    </div><!-- /mp-raja -->
 
+    <div class="mainpanel" id="mp-rewards">
 
     <section class="section-card" id="rewards">
       <div class="section-heading">
@@ -895,6 +940,10 @@
         <div class="house-rule"><span class="rn">Rule 04</span><h3>Stuck is the job</h3><p>Getting stuck isn't failing — it's the work. Mark it <code>Stuck</code>, ask for help, and keep going. Never quit silently.</p></div>
       </div>
     </section>
+
+    </div><!-- /mp-rewards -->
+
+    <div class="mainpanel" id="mp-parents">
 
     <section class="section-card" id="parent-review">
       <div class="section-heading">
@@ -963,21 +1012,38 @@
       </div>
     </section>
 
+    </div><!-- /mp-parents -->
+
     <footer>Summer Independence Project Lab — your practical guide for planning, creating, sharing safely, improving, and becoming more independent together.</footer>
   </div>
 
   <script>
-    const buttons = document.querySelectorAll('.tab-btn');
-    const panels = document.querySelectorAll('.tab-panel');
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        const target = button.dataset.tab;
-        buttons.forEach(btn => { btn.classList.remove('active'); btn.setAttribute('aria-selected','false'); });
-        panels.forEach(panel => panel.classList.remove('active'));
-        button.classList.add('active');
-        button.setAttribute('aria-selected','true');
-        document.getElementById(target).classList.add('active');
-        location.hash = target;
+    const mainTabs = Array.from(document.querySelectorAll('.maintab'));
+    const mainPanels = Array.from(document.querySelectorAll('.mainpanel'));
+    function showMain(name){
+      if(!document.getElementById('mp-' + name)) return;
+      mainTabs.forEach(t => {
+        const on = t.dataset.main === name;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', String(on));
+      });
+      mainPanels.forEach(p => p.classList.toggle('active', p.id === 'mp-' + name));
+      window.scrollTo({ top:0 });
+    }
+    mainTabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => {
+        showMain(tab.dataset.main);
+        history.replaceState(null, '', '#' + tab.dataset.main);
+      });
+      tab.addEventListener('keydown', e => {
+        if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+          e.preventDefault();
+          const dir = e.key === 'ArrowRight' ? 1 : -1;
+          const next = mainTabs[(i + dir + mainTabs.length) % mainTabs.length];
+          next.focus();
+          showMain(next.dataset.main);
+          history.replaceState(null, '', '#' + next.dataset.main);
+        }
       });
     });
 
@@ -1087,8 +1153,7 @@
 
     if(location.hash){
       const id = location.hash.replace('#','');
-      const tab = document.querySelector(`.tab-btn[data-tab="${id}"]`);
-      if(tab) tab.click();
+      if(document.getElementById('mp-' + id)) showMain(id);
     }
   </script>
 </body>
