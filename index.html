@@ -282,11 +282,25 @@
     .reset-mini { margin-top:12px; background:transparent; border:0; color:var(--muted); font-weight:800; font-size:.8rem; cursor:pointer; text-decoration:underline; padding:0; }
     .reset-mini:hover { color:var(--red); }
 
+    /* ===== task → skill / why-this-matters reveal ===== */
+    .why { margin:0 22px 20px; border-top:1px dashed var(--line-strong); padding-top:14px; }
+    .why-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; background:linear-gradient(180deg,#fff,#f4fbff); border:1px solid var(--line); border-radius:14px; padding:12px 16px; cursor:pointer; text-align:left; transition:border-color .15s, box-shadow .15s; }
+    .why-toggle:hover { border-color:var(--line-strong); box-shadow:0 6px 18px rgba(16,42,76,.06); }
+    .why-skill { font-family:var(--display); font-weight:900; font-size:.88rem; color:#0b2d57; }
+    .why-cta { flex:none; display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; font-weight:700; color:#0b7e91; }
+    .why-cta:after { content:"⟲"; font-size:1rem; transition:transform .35s ease; }
+    .why.open .why-cta:after { transform:rotate(180deg); }
+    .why-body { max-height:0; overflow:hidden; opacity:0; transition:max-height .35s ease, opacity .3s ease, margin-top .3s ease; }
+    .why.open .why-body { max-height:320px; opacity:1; margin-top:10px; }
+    .why-body p { margin:0; background:linear-gradient(135deg, var(--cyan-soft), #ffffff); border:1px solid var(--line); border-left:4px solid var(--cyan); border-radius:12px; padding:14px 16px; color:#243a55; font-size:.97rem; line-height:1.6; }
+    @media (max-width: 720px){ .why-toggle { flex-direction:column; align-items:flex-start; gap:6px; } }
+
     @media (prefers-reduced-motion: reduce) {
       .reward.unlocked { animation:none; }
       .confetti-pc { display:none; }
       .reward-meter .fill, .progress-fill { transition:none; }
       .mainpanel.active { animation:none; }
+      .why-body, .why-cta:after { transition:none; }
       html { scroll-behavior:auto; }
     }
 
@@ -1150,6 +1164,69 @@
       }
       setTimeout(() => layer.remove(), 5200);
     }
+
+    /* ===== link every step-group to a skill + future outcome ===== */
+    const whyData = {
+      shared: [
+        { skills: "Digital organisation + ownership", why: "This is the boring-looking step professionals never skip. A clean folder and a shared tracker is how you prove your work is real and keep control of a whole project — the exact habit that makes people trusted with bigger things." }
+      ],
+      ammar: [
+        { skills: "Organisation + project setup", why: "Setting up folders and a tracker is how real studios and companies start every project. Learn it now and you'll never lose your work — and you'll look organised to anyone you team up with later." },
+        { skills: "Strategy + planning", why: "Deciding your repeatable content types is brand strategy — marketers get paid to do exactly this. It means you always know what to make next instead of staring at a blank screen." },
+        { skills: "Research + visual judgement", why: "Studying the best creators trains your eye. Every pro — designer, director, editor — starts by learning what 'good' looks like before making their own." },
+        { skills: "Creativity + video editing", why: "Turning raw clips into a clean edit is a real, in-demand skill that editors and businesses pay for. The first one is the hardest; after that it gets fun and fast." },
+        { skills: "Communication + courage", why: "Walking into a showroom and asking permission is real-world bravery. Learning to approach adults politely and pitch your idea is a superpower in jobs, interviews, and life." },
+        { skills: "Consistency + analysis", why: "Posting on a schedule and checking what worked is how every channel and business grows. You're learning to use feedback and data to improve — not just guess." },
+        { skills: "Confidence + self-management", why: "Stretching one small step at a time is how real confidence is built. You're training yourself to do slightly scary things calmly — that pays off your whole life." },
+        { skills: "Tech fluency + judgement", why: "Using AI as a tool, not a crutch, is a skill the whole world is learning right now. Knowing how to direct it and check its work puts you ahead of most adults." }
+      ],
+      basil: [
+        { skills: "Organisation + setup", why: "Building a clean hub of folders and trackers is how researchers and analysts keep big projects under control. It means your ideas and findings never get lost." },
+        { skills: "Planning + prioritising", why: "Choosing a few things to focus on instead of everything is what smart people do to actually finish. Choosing well is a real leadership skill." },
+        { skills: "Research + critical thinking", why: "Comparing options in a clear table is exactly how adults make big decisions — which phone, which car, which plan. You're sharpening your judgement." },
+        { skills: "Communication + teaching", why: "Turning what you know into a guide others can follow is teaching — and teaching proves you truly understand it. Clear communicators get listened to everywhere." },
+        { skills: "Communication + online safety", why: "Posting structured, useful updates while staying safe online is a skill you'll use forever in teams, school, and work." },
+        { skills: "Discipline + tracking", why: "Tracking your practice — sport, swimming, or cooking — is how athletes and pros improve. What gets measured gets better." },
+        { skills: "Organisation + presentation", why: "Collecting your best work into a portfolio is what people show to get into teams, schools, and jobs. Proof beats promises." }
+      ],
+      mohammad: [
+        { skills: "Organisation", why: "Even artists need a tidy place for their work. Saving and naming files means you'll always find your favourite creations again — and never lose the good stuff." },
+        { skills: "Decision-making", why: "Picking one idea to start is braver than it sounds. Starting instead of waiting for perfect is the secret every creator learns." },
+        { skills: "Creativity + consistency", why: "Making one small thing at a time adds up to a lot. This is how real comics, games, and books actually get made — piece by piece." },
+        { skills: "Editing + tech skills", why: "Editing video is a skill grown-ups get paid for. You're learning to grab attention and tell a story in just a few seconds." },
+        { skills: "Growth mindset", why: "Improving just one thing each time is how you get really good without it feeling hard. Version 2 is always better than Version 1." },
+        { skills: "Pride + presentation", why: "Collecting your best work shows how far you've come. Being able to show and talk about what you made builds real confidence." }
+      ],
+      raja: [
+        { skills: "Organisation + setup", why: "Modelling a clean, organised workflow shows the boys that even big creative projects start with simple structure — and it keeps your story assets safe." },
+        { skills: "Responsibility + integrity", why: "Setting accuracy and respect rules first models integrity — doing things properly even when no one is checking. That's the heart of good character and good work." },
+        { skills: "Communication + storytelling", why: "A clear, simple script is the backbone of every film and lesson. Structuring a message so a 10-year-old understands it is a master communication skill." },
+        { skills: "Tech fluency + planning", why: "Learning to direct AI with a prompt bank is a cutting-edge skill — and showing the boys you're learning something new too is powerful modelling." },
+        { skills: "Creativity + craft", why: "Assembling scenes, captions, and a calm thumbnail is real production craft. Finishing a piece end-to-end models discipline and follow-through." },
+        { skills: "Humility + iteration", why: "Showing a draft, taking feedback, and making Version 2 shows that even adults revise and improve. That lesson is worth more than a perfect first try." }
+      ]
+    };
+    Object.keys(whyData).forEach(owner => {
+      const blocks = document.querySelectorAll(`.task-block[data-owner="${owner}"]`);
+      blocks.forEach((block, i) => {
+        const data = whyData[owner][i];
+        if(!data) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'why';
+        wrap.innerHTML =
+          '<button class="why-toggle" type="button" aria-expanded="false">' +
+            '<span class="why-skill">💡 Builds: ' + data.skills + '</span>' +
+            '<span class="why-cta">Why this matters</span>' +
+          '</button>' +
+          '<div class="why-body"><p>💪 ' + data.why + '</p></div>';
+        block.appendChild(wrap);
+        const btn = wrap.querySelector('.why-toggle');
+        btn.addEventListener('click', () => {
+          const open = wrap.classList.toggle('open');
+          btn.setAttribute('aria-expanded', String(open));
+        });
+      });
+    });
 
     if(location.hash){
       const id = location.hash.replace('#','');
